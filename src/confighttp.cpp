@@ -9,6 +9,7 @@
 // standard includes
 #include <chrono>
 #include <filesystem>
+#include <regex>
 #include <format>
 #include <fstream>
 #include <map>
@@ -306,6 +307,9 @@ namespace confighttp {
         if (path == "/api/tv-inbox") {
           return "inbox";
         }
+        if (path == "/api/tunahome/sites") {
+          return "inbox";
+        }
         if (path == "/pad" || path == "/pad/") {
           return "play";
         }
@@ -338,6 +342,9 @@ namespace confighttp {
         }
         if (path == "/api/apps/launch") {
           return "launch";
+        }
+        if (path == "/api/tunahome/corner" || path == "/api/tunahome/corner/stop") {
+          return "inbox";
         }
         if (path == "/api/pad" || path == "/api/pad/leave") {
           return "play";
@@ -376,6 +383,10 @@ namespace confighttp {
           return t.rotating && !previous;
         }
         bool ok = scope == "any" || std::find(t.scopes.begin(), t.scopes.end(), scope) != t.scopes.end();
+        // A linked TunaHome shows the Watch picture in its corner, links made before that included
+        if (!ok && scope == "watch" && t.name.starts_with("TunaHome · ")) {
+          ok = std::find(t.scopes.begin(), t.scopes.end(), "inbox") != t.scopes.end();
+        }
         if (ok && now - t.last_used > 60) {
           t.last_used = now;
           save();
@@ -2743,7 +2754,7 @@ namespace confighttp {
       if (allow) {
         api_tokens::token_t t;
         t.name = "TunaHome · " + name;
-        t.scopes = {"inbox"};
+        t.scopes = {"inbox", "watch"};
         const std::string token = "tsh_" + crypto::rand_alphabet(40, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
         t.id = crypto::rand_alphabet(12);
         t.hash = api_tokens::hash_of(token);
@@ -2839,6 +2850,135 @@ namespace confighttp {
     nlohmann::json out;
     out["status"] = true;
     out["tvs"] = tvs;
+    send_response(response, out);
+  }
+
+  namespace corner {
+    /// The address a website app opens (Apps > Add a website: cmd /c start "" "<address>"), or empty.
+    std::string website_of(const proc::ctx_t &app) {
+      static const std::regex start_url {R"re(start\s+""\s+"(https?://[^"]+)")re", std::regex::icase};
+      for (const auto &cmd : app.detached) {
+        std::smatch m;
+        if (std::regex_search(cmd, m, start_url)) {
+          return m[1].str();
+        }
+      }
+      return {};
+    }
+
+    std::string lower(std::string text) {
+      std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return (char) std::tolower(c); });
+      return text;
+    }
+
+    /// The website's window: a browser window, one titled after the site if there is one.
+    std::uint64_t find_window(const std::string &name, const std::string &url) {
+      static const std::vector<std::string> browsers {"chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe", "arc.exe"};
+      std::string host = url.substr(url.find("//") + 2);
+      host = lower(host.substr(0, host.find('/')));
+      if (host.starts_with("www.")) {
+        host = host.substr(4);
+      }
+      const auto site = lower(host.substr(0, host.find('.')));
+      std::uint64_t any = 0;
+      for (const auto &w : watch::windows()) {
+        if (w.value("minimized", false)) {
+          continue;
+        }
+        const auto exe = lower(w.value("exe", ""));
+        if (std::find(browsers.begin(), browsers.end(), exe) == browsers.end()) {
+          continue;
+        }
+        std::uint64_t id = 0;
+        try {
+          id = std::stoull(w.value("id", "0"));
+        } catch (const std::exception &) {
+          continue;
+        }
+        const auto title = lower(w.value("title", ""));
+        if (title.find(lower(name)) != std::string::npos || (!site.empty() && title.find(site) != std::string::npos)) {
+          return id;
+        }
+        if (!any) {
+          any = id;
+        }
+      }
+      return any;
+    }
+  }  // namespace corner
+
+  /// GET /api/tunahome/sites: the websites added on the Apps page, for TunaHome's corner: {"sites": [{"name", "url"}]}.
+  void getTunahomeSites(resp_https_t response, req_https_t request) {
+    if (!authenticate(response, request)) {
+      return;
+    }
+    nlohmann::json sites = nlohmann::json::array();
+    for (const auto &app : proc::proc.get_apps()) {
+      if (auto url = corner::website_of(app); !url.empty()) {
+        sites.push_back({{"name", app.name}, {"url", url}});
+      }
+    }
+    nlohmann::json out;
+    out["status"] = true;
+    out["sites"] = sites;
+    out["canShareWindows"] = !watch::windows().empty();
+    send_response(response, out);
+  }
+
+  /**
+   * @brief POST /api/tunahome/corner {"name"}: one of those websites in TunaHome's corner. It opens
+   *        in the PC's browser, and Share my screen shows that browser window (with only its
+   *        sound) to the Watch picture TunaHome draws in a corner of the TV, for up to four
+   *        hours. Only the websites on the Apps page can be opened this way.
+   */
+  void postTunahomeCorner(resp_https_t response, req_https_t request) {
+    if (!validateContentType(response, request, "application/json") || !authenticate(response, request)) {
+      return;
+    }
+    std::string name;
+    try {
+      std::stringstream ss;
+      ss << request->content.rdbuf();
+      name = nlohmann::json::parse(ss.str()).value("name", "");
+    } catch (const std::exception &) {
+      bad_request(response, request, "Couldn't read the request");
+      return;
+    }
+    std::string url;
+    for (const auto &app : proc::proc.get_apps()) {
+      if (app.name == name) {
+        url = corner::website_of(app);
+      }
+    }
+    if (url.empty()) {
+      bad_request(response, request, "There is no website called " + name + " on the Apps page");
+      return;
+    }
+    platf::open_url(url);
+    // A moment for the browser to open the page, then show just its window (the whole main
+    // screen where windows can't be shown on their own)
+    std::thread([name, url]() {
+      std::uint64_t window = 0;
+      for (int i = 0; i < 8 && !window; ++i) {
+        std::this_thread::sleep_for(1s);
+        window = corner::find_window(name, url);
+      }
+      BOOST_LOG(info) << "TunaHome corner: "sv << name << (window ? " in its browser window"sv : " on the main screen"sv);
+      watch::share_screen(true, 4 * 60, {}, window);
+    }).detach();
+    nlohmann::json out;
+    out["status"] = true;
+    send_response(response, out);
+  }
+
+  /// POST /api/tunahome/corner/stop: the corner was closed on the TV: Share my screen stops.
+  void postTunahomeCornerStop(resp_https_t response, req_https_t request) {
+    if (!authenticate(response, request)) {
+      return;
+    }
+    watch::share_screen(false, 0);
+    nlohmann::json out;
+    out["status"] = true;
     send_response(response, out);
   }
 
@@ -4580,6 +4720,9 @@ namespace confighttp {
     server.resource["^/api/tunahome/answer$"]["POST"] = postTunahomeAnswer;
     server.resource["^/api/tv-inbox$"]["GET"] = getTvInbox;
     server.resource["^/api/goodnight$"]["POST"] = postGoodnight;
+    server.resource["^/api/tunahome/sites$"]["GET"] = getTunahomeSites;
+    server.resource["^/api/tunahome/corner$"]["POST"] = postTunahomeCorner;
+    server.resource["^/api/tunahome/corner/stop$"]["POST"] = postTunahomeCornerStop;
     server.resource["^/api/quick-messages$"]["GET"] = getQuickMessages;
     server.resource["^/api/quick-messages$"]["POST"] = postQuickMessages;
     server.resource["^/api/sounds$"]["GET"] = getSounds;

@@ -9,7 +9,38 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Watch">
   <meta name="theme-color" content="#041431">
+  <script>
+    // TunaHome's corner on a TV (?embed=1): just the picture, filling its small window
+    if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed')
+  </script>
   <style>
+    html.embed, html.embed body {
+      background: #000 !important;
+      overflow: hidden;
+    }
+
+    html.embed .watch {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    html.embed .watch > :not(.watch-stage),
+    html.embed .watch-live,
+    html.embed .watch-stats,
+    html.embed .watch-exit-full,
+    html.embed .watch-password {
+      display: none !important;
+    }
+
+    html.embed .watch-stage {
+      position: fixed;
+      inset: 0;
+      aspect-ratio: auto;
+      border: 0;
+      border-radius: 0;
+    }
+
     body {
       padding-left: 0 !important;
       background-color: var(--bs-body-bg);
@@ -485,6 +516,10 @@
         this.frameQueue = []
       },
       async mounted() {
+        // TunaHome turns the corner's sound on and off from the TV
+        window.tunaSound = (on) => {
+          if (this.audioSupported && this.soundOn !== !!on) this.toggleSound()
+        }
         this.statsTimer = setInterval(() => {
           this.stats.fps = this.counters.frames
           this.stats.mbps = (this.counters.bytes * 8 / 1e6).toFixed(1)

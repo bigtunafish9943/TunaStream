@@ -204,6 +204,10 @@ expect "the token is handed over once" "$(anon "$base/api/tunahome/claim?request
 expect "the linked TV reads its inbox" "$(anon -H "Authorization: Bearer $home" "$base/api/tv-inbox?after=0" | json status)" "True"
 expect "a message reaches a linked TV with nobody streaming" "$(post /api/tv-message '{"text":"Dinner is ready"}' | json status)" "True"
 expect "the message is in the TV's inbox" "$(anon -H "Authorization: Bearer $home" "$base/api/tv-inbox?after=0")" "Dinner is ready"
+post /api/apps/add-many '{"apps":[{"name":"CI Site","detached":"cmd /c start \"\" \"https://www.example.com/tv\""}]}' > /dev/null
+expect "the TV lists the websites for its corner" "$(anon -H "Authorization: Bearer $home" "$base/api/tunahome/sites")" "https://www.example.com/tv"
+expect "the TV can't open what isn't a website" "$(anon -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $home" -H "Content-Type: application/json" -X POST -d '{"name":"Nope"}' "$base/api/tunahome/corner")" "400"
+expect "the TV may show the Watch picture" "$(anon -o /dev/null -w "%{http_code}" "$base/watch?token=$home&embed=1")" "200"
 expect "the TV's token can't read the settings" "$(anon -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $home" "$base/api/config")" "401"
 expect "quick messages can be set" "$(post /api/quick-messages '{"messages":["Game night!"," ","Bath time"]}' | json messages)" "['Game night!', 'Bath time']"
 expect "quick messages are read back" "$(get /api/quick-messages)" "Bath time"
