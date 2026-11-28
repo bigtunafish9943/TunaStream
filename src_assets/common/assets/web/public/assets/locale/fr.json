@@ -779,6 +779,7 @@
     "watch_now_app": "Maintenant : {app}.",
     "watch_now_app_on": "Maintenant : {app}, sur {devices}.",
     "watch_now_screen": "Maintenant : l'écran de votre PC (Partager mon écran est activé).",
+    "watch_phone_app": "Pour un téléphone à part (celui d'un enfant, par exemple) : créez un mot de passe de visionnage sur la page Regarder, scannez le code avec ce téléphone, choisissez Partager puis Sur l'écran d'accueil, et tapez le mot de passe une fois dans la nouvelle app. Elle s'ouvre ensuite directement sur le stream, en plein écran, avec un bouton pour le son.",
     "watch_qr_label": "QR code de la page Regarder",
     "watch_title": "Regarder le stream",
     "watch_when": "Le direct démarre quand une TV diffuse un jeu ou quand vous partagez votre écran. Ouvrez la page maintenant, elle se lance d'elle-même.",

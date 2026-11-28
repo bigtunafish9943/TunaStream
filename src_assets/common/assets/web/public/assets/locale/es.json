@@ -779,6 +779,7 @@
     "watch_now_app": "Ahora: {app}.",
     "watch_now_app_on": "Ahora: {app}, en {devices}.",
     "watch_now_screen": "Ahora: la pantalla de tu PC (Compartir mi pantalla está activado).",
+    "watch_phone_app": "Para un teléfono propio (el de un niño, por ejemplo): crea una contraseña para ver en la página Ver, escanea el código con ese teléfono, elige Compartir y luego Añadir a pantalla de inicio, y escribe la contraseña una vez en la nueva app. Después se abre directamente en el stream, a pantalla completa, con un botón de sonido.",
     "watch_qr_label": "Código QR de la página Ver",
     "watch_title": "Ver el stream",
     "watch_when": "Se emite cuando una TV transmite un juego o cuando compartes tu pantalla. Abre la página ya y empezará sola.",

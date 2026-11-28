@@ -784,6 +784,7 @@
     "watch_now_app": "Now: {app}.",
     "watch_now_app_on": "Now: {app}, playing on {devices}.",
     "watch_now_screen": "Now: your PC's screen (Share my screen is on).",
+    "watch_phone_app": "For a phone of its own (a child's, say): make a watch password on the Watch page, scan the code on that phone, choose Share, then Add to Home Screen, and type the password once in the new app. It then opens straight to the stream, full screen, with a sound button.",
     "watch_qr_label": "QR code for the Watch page",
     "watch_title": "Watch the stream",
     "watch_when": "It goes live when a TV streams a game, or when you share your screen. Open the page now and it starts by itself.",

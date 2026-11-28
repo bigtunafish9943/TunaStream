@@ -12,6 +12,8 @@
   <script>
     // TunaHome's corner on a TV (?embed=1): just the picture, filling its small window
     if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed')
+    // Opened from a phone's home screen: just the stream, filling the screen
+    else if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true) document.documentElement.classList.add('app')
   </script>
   <style>
     html.embed, html.embed body {
@@ -31,6 +33,51 @@
     html.embed .watch-exit-full,
     html.embed .watch-password {
       display: none !important;
+    }
+
+    html.app, html.app body {
+      background: #000 !important;
+      overflow: hidden;
+    }
+
+    html.app .watch {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    html.app .watch > :not(.watch-stage),
+    html.app .watch-live,
+    html.app .watch-stats,
+    html.app .watch-exit-full {
+      display: none !important;
+    }
+
+    html.app .watch-stage {
+      position: fixed;
+      inset: 0;
+      aspect-ratio: auto;
+      border: 0;
+      border-radius: 0;
+      height: 100dvh;
+    }
+
+    .watch-app-sound {
+      position: absolute;
+      right: max(1rem, env(safe-area-inset-right));
+      bottom: max(1rem, env(safe-area-inset-bottom));
+      width: 3.4rem;
+      height: 3.4rem;
+      border-radius: 50%;
+      border: 0;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 1.35rem;
+      z-index: 5;
+    }
+
+    .watch-app-sound.is-off {
+      background: rgba(217, 45, 32, 0.85);
     }
 
     html.embed .watch-stage {
@@ -285,6 +332,10 @@
           <span class="watch-cheer-emoji">{{ c.emoji }}</span> <span class="watch-cheer-name">{{ c.name }}</span>
         </div>
       </div>
+      <button type="button" class="watch-app-sound" :class="{ 'is-off': !soundOn }" v-if="standalone && audioSupported"
+              @click.stop="toggleSound" :aria-pressed="soundOn" :aria-label="soundOn ? $t('watch.sound_on') : $t('watch.sound_off')">
+        <i class="fas" :class="soundOn ? 'fa-volume-high' : 'fa-volume-xmark'" aria-hidden="true"></i>
+      </button>
       <div class="watch-status" v-if="state !== 'playing'" role="status">
         <div class="spinner-border" v-if="state === 'connecting'" aria-hidden="true"></div>
         <p>{{ statusText }}</p>
@@ -514,6 +565,8 @@
         // Not reactive: counted many times a second
         this.counters = { bytes: 0, frames: 0 }
         this.frameQueue = []
+        this.syncMisses = 0
+        this.syncBroken = false
       },
       async mounted() {
         // TunaHome turns the corner's sound on and off from the TV
@@ -920,6 +973,20 @@
           // TunaStream closes long responses after a few minutes: carry straight on
           this.retryLater(200, gen)
         },
+        // The home-screen app keeps the phone's screen on while there's a picture
+        async keepAwake() {
+          if (!this.standalone || this.wakeLock || this.wakeAsking || !navigator.wakeLock || document.visibilityState !== 'visible') return
+          this.wakeAsking = true
+          try {
+            this.wakeLock = await navigator.wakeLock.request('screen')
+            this.wakeLock.addEventListener('release', () => { this.wakeLock = null })
+          } catch (e) {
+            // Not allowed now: asked again in a while, not every picture
+            setTimeout(() => { this.wakeAsking = false }, 30000)
+            return
+          }
+          this.wakeAsking = false
+        },
         paint(frame) {
           const canvas = this.$refs.canvas
           if (canvas.width !== frame.displayWidth || canvas.height !== frame.displayHeight) {
@@ -932,6 +999,7 @@
           this.ctx2d.drawImage(frame, 0, 0, canvas.width, canvas.height)
           frame.close()
           if (this.state !== 'playing') this.state = 'playing'
+          if (this.standalone && !this.wakeLock) this.keepAwake()
         },
         // Draws the newest picture whose sound is playing now
         schedulePaint() {
@@ -940,17 +1008,30 @@
           requestAnimationFrame(() => {
             this.paintPending = false
             const audio = this.audio
-            if (!audio || audio.offset === undefined || !this.soundOn) {
-              while (this.frameQueue.length) this.paint(this.frameQueue.shift())
+            if (!audio || audio.offset === undefined || !this.soundOn || this.syncBroken) {
+              while (this.frameQueue.length) this.paint(this.frameQueue.shift().frame)
               return
             }
             const now = audio.context.currentTime
+            const nowMs = performance.now()
             let due = null
-            while (this.frameQueue.length && this.frameQueue[0].timestamp / 1e6 + audio.offset <= now + 0.008) {
-              if (due) due.close()
+            // A picture is shown when its sound plays, or after 0.3 s at the latest: where the
+            // phone's sound clock and the pictures disagree (an iPhone, say), the picture used to
+            // wait for a moment that never came and froze while the sound went on
+            while (this.frameQueue.length && (this.frameQueue[0].frame.timestamp / 1e6 + audio.offset <= now + 0.008 ||
+                                              nowMs - this.frameQueue[0].at > 300)) {
+              if (due) due.frame.close()
               due = this.frameQueue.shift()
             }
-            if (due) this.paint(due)
+            if (due) {
+              if (nowMs - due.at > 300) {
+                // Pictures keep missing their sound: show them as they come from now on
+                if (++this.syncMisses > 30) this.syncBroken = true
+              } else if (this.syncMisses > 0) {
+                this.syncMisses--
+              }
+              this.paint(due.frame)
+            }
             if (this.frameQueue.length) this.schedulePaint()
           })
         },
@@ -963,9 +1044,9 @@
               this.counters.frames++
               // With sound on, each picture waits for its sound (which is buffered a little
               // against Wi-Fi), so lips and footsteps line up; without sound, at once
-              if (this.soundOn && this.audio && this.audio.offset !== undefined) {
-                this.frameQueue.push(frame)
-                if (this.frameQueue.length > 45) this.frameQueue.shift().close()
+              if (this.soundOn && this.audio && this.audio.offset !== undefined && !this.syncBroken) {
+                this.frameQueue.push({ frame, at: performance.now() })
+                if (this.frameQueue.length > 45) this.frameQueue.shift().frame.close()
                 this.schedulePaint()
               } else {
                 this.paint(frame)
@@ -1006,6 +1087,8 @@
           }
         },
         startAudio() {
+          // iPhone: the loudspeaker (and with the ring switch on silent), as a video plays, not the earpiece
+          try { if (navigator.audioSession) navigator.audioSession.type = 'playback' } catch (e) { /* older phones */ }
           const context = new AudioContext({ sampleRate: 48000, latencyHint: 'interactive' })
           const audio = { context, next: 0, decoder: null }
           audio.decoder = new AudioDecoder({
@@ -1065,7 +1148,7 @@
           } else if (this.audio) {
             this.audio.context.suspend()
             // Pictures waiting for their sound go out now
-            while (this.frameQueue.length) this.paint(this.frameQueue.shift())
+            while (this.frameQueue.length) this.paint(this.frameQueue.shift().frame)
           }
         },
         fullscreen() {

@@ -779,6 +779,7 @@
     "watch_now_app": "Jetzt: {app}.",
     "watch_now_app_on": "Jetzt: {app}, läuft auf {devices}.",
     "watch_now_screen": "Jetzt: der Bildschirm deines PCs (Bildschirm teilen ist an).",
+    "watch_phone_app": "Für ein eigenes Handy (etwa das eines Kindes): Erstelle auf der Zuschauen-Seite ein Zuschau-Passwort, scanne den Code mit dem Handy, wähle Teilen und dann Zum Home-Bildschirm, und gib das Passwort einmal in der neuen App ein. Danach öffnet sie direkt den Stream im Vollbild, mit einer Ton-Taste.",
     "watch_qr_label": "QR-Code für die Zuschauen-Seite",
     "watch_title": "Den Stream ansehen",
     "watch_when": "Live geht es, sobald ein Fernseher ein Spiel streamt oder du deinen Bildschirm teilst. Öffne die Seite jetzt, dann startet sie von selbst.",
