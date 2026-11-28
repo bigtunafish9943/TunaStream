@@ -1957,6 +1957,55 @@ html[data-ts-theme=summer][data-bs-theme=dark] {
     height: auto;
 }
 
+.home-watch h2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.home-watch-live,
+.home-watch-off {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.home-watch-live {
+    background: #d92d20;
+    color: #ffffff;
+}
+
+.home-watch-off {
+    background: var(--ts-surface-border);
+    color: var(--bs-secondary-color);
+    font-weight: 600;
+}
+
+.home-watch-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #ffffff;
+    animation: home-watch-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes home-watch-pulse {
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-watch-dot {
+        animation: none;
+    }
+}
+
 .home-phone-url {
     font-family: inherit;
     word-break: break-all;
