@@ -440,6 +440,12 @@ namespace {
     winrt::IDirect3DDevice uwp_device {nullptr};
     winrt::Windows::Graphics::DirectX::DirectXPixelFormat pixel_format {};
 
+    // The last frame sent, sent again now and then when nothing changes: a window that sits
+    // still (a paused video, a page) otherwise gave only its first frame, and anything starting
+    // to watch after that saw black
+    int last_slot = -1;
+    std::uint64_t last_sent_ms = 0;
+
     // Sizing the window to fill the picture, keeping its shape: a small game window isn't a
     // postage stamp in the middle, and a big one isn't cut off
     winrt::com_ptr<ID3D11VertexShader> vs;
@@ -549,6 +555,31 @@ float4 ps_main(v2p i) : SV_Target {
 
     void quit(int code) {
       TerminateProcess(GetCurrentProcess(), (UINT) code);
+    }
+
+    /// Sends the last frame again if nothing new came for a second (called every half second).
+    void repeat_if_still() {
+      std::lock_guard lg {lock};
+      if (last_slot < 0 || GetTickCount64() - last_sent_ms < 1000) {
+        return;
+      }
+      LARGE_INTEGER now {};
+      LARGE_INTEGER freq {};
+      QueryPerformanceCounter(&now);
+      QueryPerformanceFrequency(&freq);
+      msg_t m {};
+      m.magic = MAGIC;
+      m.type = MSG_FRAME;
+      m.slot = (std::uint32_t) last_slot;
+      m.width = ring_desc.Width;
+      m.height = ring_desc.Height;
+      m.format = (std::uint32_t) ring_desc.Format;
+      // In the units of SystemRelativeTime: 100 ns
+      m.qpc = (std::uint64_t) (now.QuadPart / freq.QuadPart * 10'000'000 + now.QuadPart % freq.QuadPart * 10'000'000 / freq.QuadPart);
+      last_sent_ms = GetTickCount64();
+      if (!send(m)) {
+        quit(0);  // TunaStream went away
+      }
     }
 
     bool make_ring(const D3D11_TEXTURE2D_DESC &src) {
@@ -663,6 +694,8 @@ float4 ps_main(v2p i) : SV_Target {
         }
         mutexes[slot]->ReleaseSync(0);
         next_slot = (slot + 1) % SLOTS;
+        last_slot = slot;
+        last_sent_ms = GetTickCount64();
 
         msg_t m {};
         m.magic = MAGIC;
@@ -715,6 +748,13 @@ namespace platf {
       if (!IsWindow(window) || window_ring_w == 0 || window_ring_h == 0) {
         return EXIT_WINDOW_CLOSED;
       }
+      // A minimized window has no picture to capture (only black): it's put back on the screen,
+      // without taking the keyboard from whatever is in front. A window that's covered keeps
+      // drawing in most programs; browsers may stop, so it's brought up once, above the others.
+      if (IsIconic(window)) {
+        ShowWindow(window, SW_SHOWNOACTIVATE);
+      }
+      SetWindowPos(window, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS);
     }
     const std::string pipe = argv[2];
     LUID luid;
@@ -846,6 +886,18 @@ namespace platf {
       if (!helper.send(m)) {
         return 0;
       }
+    }
+
+    // A window that sits still: its last frame again every second
+    std::thread repeater;
+    if (window) {
+      repeater = std::thread([&helper]() {
+        while (true) {
+          Sleep(500);
+          helper.repeat_if_still();
+        }
+      });
+      repeater.detach();
     }
 
     // Cursor on/off until TunaStream closes the pipe
