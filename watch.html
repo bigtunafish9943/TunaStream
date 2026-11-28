@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <!-- TEMPLATE_HEADER - Used by Every UI Page -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TunaStream</title>
+<link rel="icon" type="image/x-icon" href="./images/tunastream.ico">
+<link href="./assets/css/tunastream.css" rel="stylesheet" />
+
+  <link rel="manifest" href="./watch.webmanifest">
+  <link rel="apple-touch-icon" href="./images/tunastream-app-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Watch">
+  <meta name="theme-color" content="#041431">
+  <script>
+    // TunaHome's corner on a TV (?embed=1): just the picture, filling its small window
+    if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed')
+    // Opened from a phone's home screen: just the stream, filling the screen
+    else if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true) document.documentElement.classList.add('app')
+  </script>
+  <style>
+    html.embed, html.embed body {
+      background: #000 !important;
+      overflow: hidden;
+    }
+
+    html.embed .watch {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    html.embed .watch > :not(.watch-stage),
+    html.embed .watch-live,
+    html.embed .watch-stats,
+    html.embed .watch-exit-full,
+    html.embed .watch-password {
+      display: none !important;
+    }
+
+    html.app, html.app body {
+      background: #000 !important;
+      overflow: hidden;
+    }
+
+    html.app .watch {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    html.app .watch > :not(.watch-stage),
+    html.app .watch-live,
+    html.app .watch-stats,
+    html.app .watch-exit-full {
+      display: none !important;
+    }
+
+    html.app .watch-stage {
+      position: fixed;
+      inset: 0;
+      aspect-ratio: auto;
+      border: 0;
+      border-radius: 0;
+      height: 100dvh;
+    }
+
+    .watch-app-sound {
+      position: absolute;
+      right: max(1rem, env(safe-area-inset-right));
+      bottom: max(1rem, env(safe-area-inset-bottom));
+      width: 3.4rem;
+      height: 3.4rem;
+      border-radius: 50%;
+      border: 0;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 1.35rem;
+      z-index: 5;
+    }
+
+    .watch-app-sound.is-off {
+      background: rgba(217, 45, 32, 0.85);
+    }
+
+    html.embed .watch-stage {
+      position: fixed;
+      inset: 0;
+      aspect-ratio: auto;
+      border: 0;
+      border-radius: 0;
+    }
+
+    body {
+      padding-left: 0 !important;
+      background-color: var(--bs-body-bg);
+    }
+
+    .watch {
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 1rem 1rem 2rem;
+    }
+
+    .watch-top {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .watch-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      color: var(--bs-emphasis-color);
+      text-decoration: none;
+    }
+
+    .watch-brand img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .watch-title {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--bs-secondary-color);
+    }
+
+    .watch-title b {
+      color: var(--bs-emphasis-color);
+    }
+
+    .watch-stage {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      border: 1px solid var(--ts-surface-border, rgba(255, 255, 255, 0.1));
+    }
+
+    .watch-stage canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      /* Full screen on a screen that isn't 16:9: the whole picture, with black bars */
+      object-fit: contain;
+    }
+
+    /* Separate rules: a browser that doesn't know one of these selectors would skip a shared rule */
+    .watch-stage:fullscreen {
+      border-radius: 0;
+      border: 0;
+      aspect-ratio: auto;
+      width: 100%;
+      height: 100%;
+    }
+
+    .watch-stage:-webkit-full-screen {
+      border-radius: 0;
+      border: 0;
+      aspect-ratio: auto;
+      width: 100%;
+      height: 100%;
+    }
+
+    .watch-stage.is-full {
+      border-radius: 0;
+      border: 0;
+      aspect-ratio: auto;
+      width: 100%;
+    }
+
+    /* Where the browser can't make the picture full screen (iPhone): fill the window instead */
+    .watch-stage.is-full {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      height: 100dvh;
+    }
+
+    .watch-exit-full {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 5;
+      opacity: 0.75;
+    }
+
+    .watch-password {
+      margin-top: 1rem;
+      text-align: start;
+      max-width: 22rem;
+    }
+
+    .watch-cheers {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.4rem;
+      pointer-events: none;
+    }
+
+    .watch-cheer {
+      background: rgba(4, 20, 49, 0.85);
+      color: #fff;
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      animation: watch-cheer-in 0.25s ease-out;
+    }
+
+    .watch-cheer-emoji {
+      font-size: 1.6rem;
+      vertical-align: middle;
+    }
+
+    .watch-cheer-bar {
+      display: inline-flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    @keyframes watch-cheer-in {
+      from { transform: translateY(0.75rem); opacity: 0; }
+      to { transform: none; opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .watch-cheer { animation: none; }
+    }
+
+    .watch-share {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--bs-border-color);
+      border-radius: 0.5rem;
+      max-width: 40rem;
+    }
+
+    .watch-status {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1.5rem;
+      text-align: center;
+      color: #e8eef7;
+      background: radial-gradient(circle at center, rgba(4, 20, 49, 0.55), rgba(0, 0, 0, 0.85));
+    }
+
+    .watch-status p {
+      max-width: 34rem;
+      margin: 0;
+    }
+
+    .watch-live {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(200, 30, 50, 0.85);
+    }
+
+    .watch-stats {
+      position: absolute;
+      top: 2.5rem;
+      left: 0.75rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 0.4rem;
+      font-size: 0.75rem;
+      line-height: 1.35;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.65);
+      pointer-events: none;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .watch-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .watch-note {
+      margin-left: auto;
+      font-size: 0.85rem;
+      color: var(--bs-secondary-color);
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/watch-Dt3votkt.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/init-BXreQeTq.js">
+  <link rel="stylesheet" crossorigin href="./assets/init-D_k9xtOw.css">
+</head>
+
+<body id="app" v-cloak>
+  <main class="watch">
+    <div class="watch-top">
+      <a class="watch-brand" href="./">
+        <img src="./images/logo-tunastream-45.png" alt="">
+        TunaStream
+      </a>
+      <span class="watch-title" v-if="showingScreen">{{ $t('watch.watching_screen') }}</span>
+      <span class="watch-title" v-else-if="app">{{ $t('watch.watching') }} <b>{{ app }}</b></span>
+      <span class="watch-title" v-else>{{ $t('watch.title') }}</span>
+    </div>
+
+    <div class="watch-stage" ref="stage" :class="{ 'is-full': pseudoFull }" @dblclick="fullscreen">
+      <button type="button" class="btn btn-sm btn-dark watch-exit-full" v-if="isFull" @click.stop="fullscreen" :aria-label="$t('watch.exit_fullscreen')">
+        <i class="fas fa-compress" aria-hidden="true"></i> {{ $t('watch.exit_fullscreen') }}
+      </button>
+      <canvas ref="canvas" width="1280" height="720" :aria-label="$t('watch.picture')" role="img"></canvas>
+      <span class="watch-live" v-if="state === 'playing'">{{ $t('watch.live') }}</span>
+      <div class="watch-stats" v-if="showStats && state === 'playing'" aria-live="off">
+        {{ $t('watch.stats_line1', { fps: stats.fps, mbps: stats.mbps }) }}<br>
+        {{ $t('watch.stats_line2', { width: stats.width, height: stats.height, skips: stats.skips, reconnects: stats.reconnects }) }}<br>
+        <span v-if="soundOn">{{ $t('watch.stats_line3', { ms: stats.soundMs }) }}</span>
+      </div>
+      <div class="watch-cheers" aria-live="polite">
+        <div class="watch-cheer" v-for="c in floating" :key="c.id">
+          <span class="watch-cheer-emoji">{{ c.emoji }}</span> <span class="watch-cheer-name">{{ c.name }}</span>
+        </div>
+      </div>
+      <button type="button" class="watch-app-sound" :class="{ 'is-off': !soundOn }" v-if="standalone && audioSupported"
+              @click.stop="toggleSound" :aria-pressed="soundOn" :aria-label="soundOn ? $t('watch.sound_on') : $t('watch.sound_off')">
+        <i class="fas" :class="soundOn ? 'fa-volume-high' : 'fa-volume-xmark'" aria-hidden="true"></i>
+      </button>
+      <div class="watch-status" v-if="state !== 'playing'" role="status">
+        <div class="spinner-border" v-if="state === 'connecting'" aria-hidden="true"></div>
+        <p>{{ statusText }}</p>
+        <form v-if="state === 'locked'" class="watch-password" @submit.prevent="usePassword">
+          <label for="watch-password" class="form-label">{{ $t('watch.password_label') }}</label>
+          <div class="input-group">
+            <input id="watch-password" class="form-control" type="password" v-model="watchPassword" autocomplete="current-password" required minlength="8">
+            <button class="btn btn-primary" :disabled="passwordBusy">{{ $t('watch.password_go') }}</button>
+          </div>
+          <p class="small text-danger mt-2 mb-0" v-if="passwordError" role="alert">{{ passwordError }}</p>
+          <p class="small mt-2 mb-0"><a href="./login?redir=./watch">{{ $t('watch.sign_in') }}</a></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="watch-controls">
+      <button type="button" class="btn btn-sm" :class="soundOn ? 'btn-primary' : 'btn-outline-secondary'"
+              @click="toggleSound" :disabled="!audioSupported" :aria-pressed="soundOn">
+        <i class="fas" :class="soundOn ? 'fa-volume-high' : 'fa-volume-xmark'" aria-hidden="true"></i>
+        {{ soundOn ? $t('watch.sound_on') : $t('watch.sound_off') }}
+      </button>
+      <button type="button" class="btn btn-sm btn-outline-secondary" @click="fullscreen">
+        <i class="fas fa-expand" aria-hidden="true"></i> {{ $t('watch.fullscreen') }}
+      </button>
+      <button type="button" class="btn btn-sm" :class="showStats ? 'btn-secondary' : 'btn-outline-secondary'" @click="showStats = !showStats" :aria-pressed="showStats">
+        <i class="fas fa-chart-simple" aria-hidden="true"></i> {{ $t('watch.stats') }}
+      </button>
+      <button type="button" class="btn btn-sm btn-outline-secondary" @click="shareAsking = !shareAsking" v-if="!token && signedIn && !shareAsking">
+        <i class="fas fa-link" aria-hidden="true"></i> {{ $t('watch.share') }}
+      </button>
+      <form class="d-inline-flex gap-2 align-items-center" v-if="!token && signedIn && shareAsking" @submit.prevent="share">
+        <label class="visually-hidden" for="share-for">{{ $t('watch.share_for') }}</label>
+        <input id="share-for" class="form-control form-control-sm" style="width: 12rem" v-model="shareFor" :placeholder="$t('watch.share_for')" maxlength="60" required>
+        <button class="btn btn-sm btn-primary"><i class="fas fa-link" aria-hidden="true"></i> {{ $t('watch.share_make') }}</button>
+        <button type="button" class="btn btn-sm btn-link" @click="shareAsking = false">{{ $t('watch.share_cancel') }}</button>
+      </form>
+      <span class="small" role="status" v-if="shareStatus">{{ shareStatus }}</span>
+      <span class="watch-cheer-bar" v-if="state === 'playing'" role="group" :aria-label="$t('watch.cheer_label')">
+        <button v-for="c in cheerKinds" :key="c.key" type="button" class="btn btn-sm btn-outline-secondary"
+                :disabled="cheerWait" @click="sendCheer(c.key)" :aria-label="$t('watch.cheer_' + c.key)" :title="$t('watch.cheer_' + c.key)">{{ c.emoji }}</button>
+      </span>
+      <span class="small" role="status" v-if="cheerStatus">{{ cheerStatus }}</span>
+      <span class="watch-note">{{ audioSupported ? $t('watch.note') : $t('watch.no_sound_here') }}</span>
+      <span class="watch-note" v-if="token && !standalone">{{ $t('watch.home_screen_tip') }}</span>
+    </div>
+
+    <!-- Share my screen: only with the password, never from a watch link -->
+    <section class="watch-share" v-if="!token && signedIn && sharing" aria-labelledby="share-title">
+      <h2 class="h6" id="share-title"><i class="fas fa-tower-broadcast" aria-hidden="true"></i> {{ $t('watch.screen_title') }}</h2>
+      <template v-if="sharing.on">
+        <p class="mb-2">{{ $t('watch.screen_on', { minutes: sharing.minutesLeft }) }}
+          <span v-if="sharing.window">({{ $t('watch.window_shared', { title: sharing.windowTitle || '' }) }})</span>
+          <span v-else-if="monitors.length > 1 && sharedMonitor">({{ monitorLabel(sharedMonitor) }})</span></p>
+        <button type="button" class="btn btn-sm btn-danger" @click="setSharing(false)" :disabled="sharingBusy">{{ $t('watch.screen_stop') }}</button>
+      </template>
+      <template v-else>
+        <p class="mb-2">{{ $t('watch.screen_desc') }}</p>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <label class="visually-hidden" for="share-minutes">{{ $t('watch.screen_for') }}</label>
+          <template v-if="monitors.length > 1 || windows.length">
+            <label class="visually-hidden" for="share-monitor">{{ $t('watch.screen_which') }}</label>
+            <select id="share-monitor" class="form-select form-select-sm w-auto" style="max-width: 24rem" v-model="shareTarget" @focus="loadMonitors">
+              <optgroup :label="$t('watch.share_screens')">
+                <option v-for="m in monitors" :key="m.id" :value="'m:' + m.id">{{ monitorLabel(m) }}</option>
+              </optgroup>
+              <optgroup :label="$t('watch.share_windows')" v-if="windows.length">
+                <option v-for="w in windows" :key="w.id" :value="'w:' + w.id">{{ w.title }}{{ w.exe ? ' (' + w.exe + ')' : '' }}</option>
+              </optgroup>
+            </select>
+          </template>
+          <select id="share-minutes" class="form-select form-select-sm w-auto" v-model.number="shareMinutes">
+            <option :value="60">{{ $t('watch.screen_1h') }}</option>
+            <option :value="120">{{ $t('watch.screen_2h') }}</option>
+            <option :value="240">{{ $t('watch.screen_4h') }}</option>
+          </select>
+          <button type="button" class="btn btn-sm btn-primary" @click="setSharing(true)" :disabled="sharingBusy">{{ $t('watch.screen_start') }}</button>
+        </div>
+        <p class="small text-muted mt-1 mb-0" v-if="shareTarget.startsWith('w:')">{{ $t('watch.window_desc') }}</p>
+      </template>
+      <div class="d-flex flex-wrap gap-2 align-items-center mt-2" v-if="soundApps.length && !shareTarget.startsWith('w:') && !(sharing.on && sharing.window)">
+        <label for="share-sound" class="mb-0">{{ $t('watch.sound_label') }}</label>
+        <select id="share-sound" class="form-select form-select-sm w-auto" v-model="leaveOut" @change="setLeaveOut">
+          <option value="">{{ $t('watch.sound_everything') }}</option>
+          <option v-for="a in soundApps" :key="a.key" :value="a.key">{{ $t('watch.sound_without', { app: a.name }) }}{{ a.running ? '' : ' ' + $t('watch.sound_not_running') }}</option>
+        </select>
+      </div>
+      <p class="small text-muted mt-1 mb-0" v-if="leaveOut">{{ $t('watch.sound_desc') }}</p>
+      <p class="small text-danger mt-2 mb-0" v-if="sharingError" role="alert">{{ sharingError }}</p>
+    </section>
+
+    <!-- Who is watching, and the picture: only with the password -->
+    <section class="watch-share" v-if="!token && signedIn" aria-labelledby="viewers-title">
+      <h2 class="h6" id="viewers-title"><i class="fas fa-users" aria-hidden="true"></i> {{ $t('watch.viewers_title') }}</h2>
+      <p class="mb-2" v-if="!viewerList.length">{{ $t('watch.viewers_none') }}</p>
+      <ul class="list-unstyled mb-2" v-else>
+        <li v-for="v in viewerList" :key="v.id" class="d-flex flex-wrap align-items-center gap-2 py-1">
+          <span class="flex-grow-1">{{ v.name }} <span class="text-muted small">{{ $t('watch.viewers_since', { time: new Date(v.since * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }) }}</span></span>
+          <button v-if="!v.signedIn" type="button" class="btn btn-sm btn-outline-danger" @click="removeViewer(v)">{{ $t('watch.viewers_remove') }}</button>
+        </li>
+      </ul>
+      <p class="small text-muted mb-3" v-if="viewerList.some((v) => !v.signedIn)">{{ $t('watch.viewers_remove_desc') }}</p>
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="watch-cheers" :checked="cheersAllowed" @change="setCheers($event.target.checked)">
+        <label class="form-check-label" for="watch-cheers">{{ $t('watch.cheers_allow') }}</label>
+      </div>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <label for="watch-picture" class="mb-0">{{ $t('watch.picture_label') }}</label>
+        <select id="watch-picture" class="form-select form-select-sm w-auto" :value="sharper ? 'sharper' : 'standard'" @change="setPicture($event.target.value === 'sharper')">
+          <option value="standard">{{ $t('watch.picture_standard') }}</option>
+          <option value="sharper">{{ $t('watch.picture_sharper') }}</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Watch passwords: don't change, for devices that come back often -->
+    <section class="watch-share" v-if="!token && signedIn" aria-labelledby="pw-title">
+      <h2 class="h6" id="pw-title"><i class="fas fa-key" aria-hidden="true"></i> {{ $t('watch.passwords_title') }}</h2>
+      <p class="mb-2">{{ $t('watch.passwords_desc') }}</p>
+      <form class="d-flex flex-wrap gap-2 align-items-center" @submit.prevent="makePassword">
+        <label class="visually-hidden" for="pw-name">{{ $t('watch.passwords_name') }}</label>
+        <input id="pw-name" class="form-control form-control-sm w-auto" v-model="newPasswordName" :placeholder="$t('watch.passwords_name')" maxlength="60" required>
+        <label class="visually-hidden" for="pw-text">{{ $t('watch.password_label') }}</label>
+        <input id="pw-text" class="form-control form-control-sm w-auto font-monospace" v-model="newPassword" :placeholder="$t('watch.password_label')" minlength="8" maxlength="128" required autocomplete="off">
+        <button type="button" class="btn btn-sm btn-outline-secondary" @click="suggestPassword">{{ $t('watch.passwords_suggest') }}</button>
+        <button class="btn btn-sm btn-primary">{{ $t('watch.passwords_make') }}</button>
+      </form>
+      <p class="small mt-2 mb-0" role="status" v-if="passwordMade">{{ passwordMade }}</p>
+      <p class="small mt-2 mb-0"><a href="./password#tokens-title">{{ $t('watch.passwords_manage') }}</a></p>
+    </section>
+  </main>
+
+</body>
+
+</html>

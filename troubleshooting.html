@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+      <!-- TEMPLATE_HEADER - Used by Every UI Page -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TunaStream</title>
+<link rel="icon" type="image/x-icon" href="./images/tunastream.ico">
+<link href="./assets/css/tunastream.css" rel="stylesheet" />
+
+      <style>
+        .troubleshooting-logs {
+          white-space: pre;
+          font-family: monospace;
+          overflow: auto;
+          max-height: 500px;
+          min-height: 500px;
+          font-size: 16px;
+          position: relative;
+        }
+
+        .copy-icon {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          padding: 8px;
+          cursor: pointer;
+          color: rgba(0, 0, 0, 1);
+          appearance: none;
+          border: none;
+          background: none;
+        }
+
+        .copy-icon:hover {
+          color: rgba(0, 0, 0, 0.75);
+        }
+
+        .copy-icon:active {
+          color: rgba(0, 0, 0, 1);
+        }
+      </style>
+  <script type="module" crossorigin src="./assets/troubleshooting-B1VNhlmN.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/init-BXreQeTq.js">
+  <link rel="modulepreload" crossorigin href="./assets/restart-Dba4tcV6.js">
+  <link rel="modulepreload" crossorigin href="./assets/_plugin-vue_export-helper-DlAUqK2U.js">
+  <link rel="modulepreload" crossorigin href="./assets/Navbar-UKWnNTBA.js">
+  <link rel="stylesheet" crossorigin href="./assets/init-D_k9xtOw.css">
+  <link rel="stylesheet" crossorigin href="./assets/Navbar-BktbOm88.css">
+</head>
+
+<body id="app" v-cloak>
+  <Navbar></Navbar>
+  <div class="container">
+    <h1 class="my-4">{{ $t('troubleshooting.troubleshooting') }}</h1>
+    <p><a href="./checklist"><i class="fas fa-list-check" aria-hidden="true"></i> {{ $t('troubleshooting.checklist_link') }}</a></p>
+    <!-- Force Close App -->
+    <div class="card p-2 my-4">
+      <div class="card-body">
+        <h2 id="close_apps">{{ $t('troubleshooting.force_close') }}</h2>
+        <br>
+        <p>{{ $t('troubleshooting.force_close_desc') }}</p>
+        <div class="alert alert-success" v-if="closeAppStatus === true">
+          {{ $t('troubleshooting.force_close_success') }}
+        </div>
+        <div class="alert alert-danger" v-if="closeAppStatus === false">
+          {{ $t('troubleshooting.force_close_error') }}
+        </div>
+        <div>
+          <button class="btn btn-warning" :disabled="closeAppPressed" @click="closeApp">
+            {{ $t('troubleshooting.force_close') }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Virtual screen driver -->
+    <div class="card p-2 my-4" v-if="platform === 'windows'">
+      <div class="card-body">
+        <h2 id="vdisplay">{{ $t('troubleshooting.vdisplay_title') }}</h2>
+        <p>{{ $t('troubleshooting.vdisplay_desc') }}</p>
+        <div class="alert" :class="vdisplayStatus === 0 ? 'alert-success' : 'alert-warning'" v-if="vdisplayStatus !== null && !vdisplayRepairing">
+          <b>{{ $t('troubleshooting.vdisplay_status_' + vdisplayStatusName) }}</b>
+          <span class="d-block">{{ $t('troubleshooting.vdisplay_reason_' + vdisplayStatusName) }}</span>
+        </div>
+        <div class="alert alert-info" v-if="vdisplayRepairing" role="status">
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> {{ $t('troubleshooting.vdisplay_repairing') }}
+        </div>
+        <div class="alert alert-warning" v-if="vdisplayRepairError">{{ vdisplayRepairError }}</div>
+        <button class="btn btn-primary" :disabled="vdisplayRepairing" @click="repairVdisplay">
+          <i class="fas fa-screwdriver-wrench"></i> {{ $t('troubleshooting.vdisplay_repair') }}
+        </button>
+        <p class="form-text mt-2 mb-0">{{ $t('troubleshooting.vdisplay_repair_note') }}</p>
+      </div>
+    </div>
+    <!-- Rumble test -->
+    <div class="card p-2 my-4">
+      <div class="card-body">
+        <h2 id="rumble_test">{{ $t('troubleshooting.rumble_test') }}</h2>
+        <br>
+        <p>{{ $t('troubleshooting.rumble_test_desc') }}</p>
+        <div class="alert alert-success" v-if="rumbleClients > 0">
+          {{ $t('troubleshooting.rumble_test_sent', { count: rumbleClients }) }}
+        </div>
+        <div class="alert alert-warning" v-if="rumbleClients === 0">
+          {{ $t('troubleshooting.rumble_test_none') }}
+        </div>
+        <div>
+          <button class="btn btn-primary" :disabled="rumblePressed" @click="rumbleTest">
+            {{ $t('troubleshooting.rumble_test_button') }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Backup and restore -->
+    <div class="card p-2 my-4">
+      <div class="card-body">
+        <h2 id="backup">{{ $t('troubleshooting.backup_title') }}</h2>
+        <p>{{ $t('troubleshooting.backup_desc') }}</p>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="backup_pairings" v-model="backupPairings">
+          <label class="form-check-label" for="backup_pairings">{{ $t('troubleshooting.backup_pairings') }}</label>
+        </div>
+        <div class="alert alert-warning" v-if="backupPairings">{{ $t('troubleshooting.backup_pairings_warning') }}</div>
+        <a class="btn btn-primary mb-3" :href="'./api/backup' + (backupPairings ? '?pairings=1' : '')">
+          <i class="fas fa-download" aria-hidden="true"></i> {{ $t('troubleshooting.backup_download') }}
+        </a>
+
+        <h3 class="h6 mt-2">{{ $t('troubleshooting.restore_title') }}</h3>
+        <p>{{ $t('troubleshooting.restore_desc') }}</p>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <input type="file" class="form-control w-auto" accept=".json,application/json" ref="restoreFile" :aria-label="$t('troubleshooting.restore_title')">
+          <button class="btn btn-outline-danger" :disabled="restoring" @click="restoreBackup">{{ $t('troubleshooting.restore_button') }}</button>
+        </div>
+        <div class="alert mt-2" :class="restoreError ? 'alert-danger' : 'alert-success'" v-if="restoreStatus">{{ restoreStatus }}</div>
+
+        <template v-if="receiverBackups.length">
+          <h3 class="h6 mt-4">{{ $t('troubleshooting.receiver_backups_title') }}</h3>
+          <p>{{ $t('troubleshooting.receiver_backups_desc') }}</p>
+          <ul>
+            <li v-for="b in receiverBackups" :key="b.name">{{ b.device }}, {{ new Date(b.made * 1000).toLocaleString() }}</li>
+          </ul>
+        </template>
+      </div>
+    </div>
+    <!-- Wi-Fi channel advice, from the networks this PC can hear -->
+    <div class="card p-2 my-4" v-if="platform === 'windows'">
+      <div class="card-body">
+        <h2 id="wifi_channel">{{ $t('troubleshooting.wifi_title') }}</h2>
+        <p>{{ $t('troubleshooting.wifi_desc') }}</p>
+        <div v-if="wifi">
+          <div class="alert alert-secondary" v-if="!wifi.available">{{ $t('troubleshooting.wifi_no_adapter') }}</div>
+          <template v-else>
+            <div class="alert" :class="wifiAdvice.level === 'good' ? 'alert-success' : 'alert-warning'">
+              <p class="mb-1" v-for="line in wifiAdvice.lines" :key="line">{{ line }}</p>
+            </div>
+            <p class="text-body-secondary" v-if="wifi.streaming">{{ $t('troubleshooting.wifi_streaming') }}</p>
+            <table class="table table-sm ts-wifi-table" v-if="wifiAdvice.channels.length">
+              <thead>
+                <tr><th>{{ $t('troubleshooting.wifi_channel') }}</th><th>{{ $t('troubleshooting.wifi_networks') }}</th><th>{{ $t('troubleshooting.wifi_strongest') }}</th></tr>
+              </thead>
+              <tbody>
+                <tr v-for="c in wifiAdvice.channels" :key="c.band + '-' + c.channel" :class="{ 'table-active': c.mine, 'ts-wifi-best': c.best }">
+                  <td>{{ c.channel }} <span class="text-body-secondary">({{ c.band === 2 ? '2.4' : c.band }} GHz)</span>
+                    <span v-if="c.mine" class="badge text-bg-primary ms-1">{{ $t('troubleshooting.wifi_yours') }}</span>
+                    <span v-if="c.best" class="badge text-bg-success ms-1">{{ $t('troubleshooting.wifi_quietest') }}</span></td>
+                  <td>{{ c.count }}</td>
+                  <td>{{ c.strongest }}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </template>
+        </div>
+        <button class="btn btn-primary" :disabled="wifiScanning" @click="scanWifi">
+          <span class="spinner-border spinner-border-sm me-1" v-if="wifiScanning" aria-hidden="true"></span>
+          {{ $t(wifi ? 'troubleshooting.wifi_again' : 'troubleshooting.wifi_button') }}
+        </button>
+      </div>
+    </div>
+    <!-- Restart TunaStream -->
+    <div class="card p-2 my-4">
+      <div class="card-body">
+        <h2 id="restart">{{ $t('troubleshooting.restart_tunastream') }}</h2>
+        <br>
+        <p>{{ $t('troubleshooting.restart_tunastream_desc') }}</p>
+        <div class="alert alert-success" v-if="serverRestarting">
+          {{ $t('troubleshooting.restart_tunastream_success') }}
+        </div>
+        <div>
+          <button class="btn btn-warning" :disabled="serverQuitting || serverRestarting" @click="restart">
+            {{ $t('troubleshooting.restart_tunastream') }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Quit TunaStream -->
+    <div class="card p-2 my-4">
+      <div class="card-body">
+        <h2 id="quit">{{ $t('troubleshooting.quit_tunastream') }}</h2>
+        <br>
+        <p>{{ $t('troubleshooting.quit_tunastream_desc') }}</p>
+        <div class="alert alert-success" v-if="serverQuit">
+          {{ $t('troubleshooting.quit_tunastream_success') }}
+        </div>
+        <div class="alert alert-success" v-if="serverQuitting">
+          {{ $t('troubleshooting.quit_tunastream_success_ongoing') }}
+        </div>
+        <div>
+          <button class="btn btn-warning" :disabled="serverQuitting || serverRestarting" @click="quit">
+            {{ $t('troubleshooting.quit_tunastream') }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Reset persistent display device settings -->
+    <div class="card p-2 my-4" v-if="platform === 'windows'">
+      <div class="card-body">
+        <h2 id="dd_reset">{{ $t('troubleshooting.dd_reset') }}</h2>
+        <br>
+        <p style="white-space: pre-line">{{ $t('troubleshooting.dd_reset_desc') }}</p>
+        <div class="alert alert-success" v-if="ddResetStatus === true">
+          {{ $t('troubleshooting.dd_reset_success') }}
+        </div>
+        <div class="alert alert-danger" v-if="ddResetStatus === false">
+          {{ $t('troubleshooting.dd_reset_error') }}
+        </div>
+        <div>
+          <button class="btn btn-warning" :disabled="ddResetPressed" @click="ddResetPersistence">
+            {{ $t('troubleshooting.dd_reset') }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Logs sent from TVs -->
+    <div class="card p-2 my-4">
+      <div class="card-body">
+        <h2 id="tv_logs">{{ $t('troubleshooting.tv_logs_title') }}</h2>
+        <p>{{ $t('troubleshooting.tv_logs_desc') }}</p>
+        <p v-if="!receiverLogs.length" class="text-muted">{{ $t('troubleshooting.tv_logs_none') }}</p>
+        <ul class="list-unstyled" v-else>
+          <li v-for="l in receiverLogs" :key="l.name" class="d-flex flex-wrap gap-2 align-items-baseline py-1">
+            <span>{{ l.device }}, {{ new Date(l.made * 1000).toLocaleString() }}</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" @click="showTvLog(l.name)">{{ $t('troubleshooting.tv_logs_show') }}</button>
+            <a class="btn btn-sm btn-outline-secondary" :href="'./api/receiver-log?download=1&name=' + encodeURIComponent(l.name)">
+              <i class="fas fa-download" aria-hidden="true"></i> {{ $t('troubleshooting.logs_save') }}
+            </a>
+          </li>
+        </ul>
+        <div class="troubleshooting-logs mt-2" v-if="tvLog">{{ tvLog }}</div>
+      </div>
+    </div>
+    <!-- Logs -->
+    <div class="card p-2 my-4">
+      <div class="card-body">
+        <h2 id="logs">{{ $t('troubleshooting.logs') }}</h2>
+        <br>
+        <div class="d-flex justify-content-between align-items-baseline py-2">
+          <p>{{ $t('troubleshooting.logs_desc') }}</p>
+          <div class="d-flex gap-2 align-items-baseline">
+            <button type="button" class="btn btn-sm btn-outline-secondary text-nowrap" @click="saveLogs" :disabled="!logs">
+              <i class="fas fa-download" aria-hidden="true"></i> {{ $t('troubleshooting.logs_save') }}
+            </button>
+            <input type="text" class="form-control" v-model="logFilter" :placeholder="$t('troubleshooting.logs_find')" style="width: 300px">
+          </div>
+        </div>
+        <div>
+          <div class="troubleshooting-logs">
+            <button class="copy-icon"><i class="fas fa-copy " @click="copyLogs"></i></button>{{actualLogs}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</body>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <!-- TEMPLATE_HEADER - Used by Every UI Page -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TunaStream</title>
+<link rel="icon" type="image/x-icon" href="./images/tunastream.ico">
+<link href="./assets/css/tunastream.css" rel="stylesheet" />
+
+    <style>
+      .pre-wrap {
+        white-space: pre-wrap;
+      }
+
+      .buttons {
+        padding: 1em 0;
+      }
+    </style>
+  <script type="module" crossorigin src="./assets/config-BpDZ7Kq8.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/init-BXreQeTq.js">
+  <link rel="modulepreload" crossorigin href="./assets/restart-Dba4tcV6.js">
+  <link rel="modulepreload" crossorigin href="./assets/_plugin-vue_export-helper-DlAUqK2U.js">
+  <link rel="modulepreload" crossorigin href="./assets/Navbar-UKWnNTBA.js">
+  <link rel="modulepreload" crossorigin href="./assets/Checkbox-7hdVfFBf.js">
+  <link rel="stylesheet" crossorigin href="./assets/init-D_k9xtOw.css">
+  <link rel="stylesheet" crossorigin href="./assets/Navbar-BktbOm88.css">
+  <link rel="stylesheet" crossorigin href="./assets/config-B2oZwUdM.css">
+</head>
+
+<body id="app" v-cloak>
+  <Navbar></Navbar>
+  <div class="container">
+    <div class="settings-title">
+      <h1 class="my-4">{{ $t('config.configuration') }}</h1>
+      <a class="btn btn-outline-primary" href="./setup"><i class="fas fa-wand-magic-sparkles"></i> {{ $t('config.run_setup') }}</a>
+    </div>
+    <p class="settings-intro">{{ $t('config.settings_intro') }}</p>
+    <div class="form settings-layout" v-if="config">
+      <!-- Settings menu -->
+      <nav class="settings-menu" aria-label="Settings sections">
+        <ul class="nav nav-pills flex-column">
+          <template v-for="tab in tabs" :key="tab.id">
+            <li class="settings-menu-heading" v-if="tab.id === 'files'">{{ $t('config.menu_experts') }}</li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{'active': tab.id === currentTab}" href="#"
+                :aria-current="tab.id === currentTab ? 'page' : null"
+                @click.prevent="currentTab = tab.id">{{ $t('config.tab_' + tab.id) }}</a>
+            </li>
+          </template>
+        </ul>
+      </nav>
+
+      <div class="settings-content">
+
+      <!-- Sections most people never need -->
+      <p class="experts-note" v-if="!['everyday', 'general', 'sharedpc', 'input', 'av', 'network'].includes(currentTab)">
+        {{ $t('config.experts_note') }}
+      </p>
+
+      <!-- Everyday: what people change most, in one place -->
+      <everyday
+        v-if="currentTab === 'everyday'"
+        :config="config"
+        :platform="platform">
+      </everyday>
+
+      <!-- General Tab -->
+      <general
+        v-if="currentTab === 'general'"
+        :config="config"
+        :global-prep-cmd="global_prep_cmd"
+        :global-state-cmd="global_state_cmd"
+        :server-cmd="server_cmd"
+        :platform="platform">
+      </general>
+
+      <!-- Shared PC Tab -->
+      <shared-pc
+        v-if="currentTab === 'sharedpc'"
+        :config="config"
+        :platform="platform">
+      </shared-pc>
+
+      <!-- Input Tab -->
+      <inputs
+        v-if="currentTab === 'input'"
+        :config="config"
+        :platform="platform">
+      </inputs>
+
+      <!-- Audio/Video Tab -->
+      <audio-video
+        v-if="currentTab === 'av'"
+        :config="config"
+        :platform="platform"
+        :vdisplay="vdisplayStatus"
+      >
+      </audio-video>
+
+      <!-- Network Tab -->
+      <network
+        v-if="currentTab === 'network'"
+        :config="config"
+        :platform="platform">
+      </network>
+
+      <!-- Files Tab -->
+      <files
+        v-if="currentTab === 'files'"
+        :config="config"
+        :platform="platform">
+      </files>
+
+      <!-- Advanced Tab -->
+      <advanced
+        v-if="currentTab === 'advanced'"
+        :config="config"
+        :platform="platform">
+      </advanced>
+
+      <container-encoders
+        :current-tab="currentTab"
+        :config="config"
+        :platform="platform">
+      </container-encoders>
+
+      <!-- Save and Apply buttons -->
+      <div class="alert alert-success my-4" v-if="saved && !restarted">
+      <b>{{ $t('_common.success') }}</b> {{ $t('config.apply_note') }}
+    </div>
+    <div class="alert alert-success my-4" v-if="restarted" role="status">
+      <b>{{ $t('_common.success') }}</b> {{ $t(restartSlow ? 'config.restart_slow' : 'config.restart_note') }}
+    </div>
+    <div class="mb-3 buttons">
+      <button class="btn btn-primary" @click="save">{{ $t('_common.save') }}</button>
+      <button class="btn btn-success mx-2" @click="apply" v-if="saved && !restarted">{{ $t('_common.apply') }}</button>
+    </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+

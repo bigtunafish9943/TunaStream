@@ -1,0 +1,2081 @@
+/* TunaStream theme. Colors come from the logo: deep navy, bright cyan and white. */
+
+/* Hide pages while localization is loading */
+[v-cloak] {
+    display: none;
+}
+
+:root {
+    --ts-navy: #041431;
+    --ts-deep: #0a2350;
+    --ts-accent: #0cc8f6;
+    --ts-accent-soft: #8be6fc;
+    --ts-blue: #0b74d1;
+    --ts-foam: #eef5fb;
+    --ts-accent-rgb: 12, 200, 246;
+    --ts-accent-hover: #4dd8fa;
+    --ts-accent-active: #09b0da;
+    --ts-outline: #3a5a86;
+    --ts-display: "Bahnschrift", "DIN Alternate", "Avenir Next", "Segoe UI Variable Display", system-ui, sans-serif;
+    --bs-border-radius: 0.5rem;
+    --bs-border-radius-lg: 0.75rem;
+}
+
+/* ---------- Light theme ---------- */
+/* The "html" prefix outranks Bootstrap's own theme rules, which load after this file */
+html:root,
+html[data-bs-theme=light] {
+    --bs-body-bg: var(--ts-foam);
+    --bs-body-color: #10233b;
+    --bs-secondary-color: rgba(16, 35, 59, 0.7);
+    --bs-emphasis-color: var(--ts-navy);
+    --bs-heading-color: var(--ts-navy);
+    --bs-link-color: #0a66b8;
+    --bs-link-color-rgb: 10, 102, 184;
+    --bs-link-hover-color: var(--ts-navy);
+    --bs-link-hover-color-rgb: 11, 37, 69;
+    --bs-border-color: #cfdce8;
+    --bs-tertiary-bg: #e2ecf3;
+    --ts-surface: #ffffff;
+    --ts-surface-border: #d6e2ec;
+}
+
+/* ---------- Dark theme ---------- */
+html[data-bs-theme=dark] {
+    --bs-body-bg: #030d22;
+    --bs-body-color: #dbe6f1;
+    --bs-secondary-color: rgba(219, 230, 241, 0.68);
+    --bs-emphasis-color: #ffffff;
+    --bs-heading-color: #f3f7fb;
+    --bs-link-color: var(--ts-accent-soft);
+    --bs-link-color-rgb: 139, 230, 252;
+    --bs-link-hover-color: var(--ts-accent);
+    --bs-link-hover-color-rgb: 12, 200, 246;
+    --bs-border-color: #17335f;
+    --bs-tertiary-bg: #0a1f45;
+    --ts-surface: #081a3a;
+    --ts-surface-border: #142f58;
+}
+
+body {
+    min-height: 100vh;
+}
+
+h1, h2, h3, .navbar-brand {
+    font-family: var(--ts-display);
+    letter-spacing: 0.005em;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 2.1rem;
+}
+
+h2 {
+    font-weight: 600;
+    font-size: 1.45rem;
+}
+
+#content {
+    padding-bottom: 3rem;
+}
+
+/* ---------- Navigation ---------- */
+.navbar.navbar-background {
+    background-color: var(--ts-navy);
+    border-bottom: 2px solid var(--ts-accent);
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+}
+
+.navbar.header .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-right: 1rem;
+}
+
+.navbar.header .navbar-brand img {
+    height: 30px;
+    width: auto;
+}
+
+.navbar.header .navbar-brand .brand-word {
+    letter-spacing: -0.01em;
+}
+
+/* Name with the installed version under it */
+.navbar.header .navbar-brand .brand-stack {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.navbar.header .navbar-brand .brand-version {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--ts-accent-soft, #8be6fc);
+    opacity: 0.85;
+}
+
+.navbar.header .navbar-brand .brand-word b {
+    font-weight: 600;
+    color: var(--ts-accent);
+}
+
+/* The mark is white on transparent, so on light pages it sits on a navy tile */
+.brand-tile {
+    background-color: var(--ts-navy);
+    border-radius: 0.6rem;
+    padding: 0.5rem 0.75rem;
+    box-sizing: content-box;
+}
+
+.navbar.header .nav-link {
+    color: rgba(255, 255, 255, 0.78) !important;
+    font-weight: 400 !important;
+    border-radius: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.navbar.header .nav-link:hover,
+.navbar.header .nav-link:focus-visible {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.09);
+}
+
+.navbar.header .nav-link.active {
+    color: var(--ts-navy) !important;
+    background-color: var(--ts-accent);
+    font-weight: 600 !important;
+}
+
+.navbar.header .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.navbar.header .navbar-toggler-icon {
+    --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* ---------- Surfaces ---------- */
+body .card {
+    --bs-card-bg: var(--ts-surface);
+    --bs-card-border-color: var(--ts-surface-border);
+    --bs-card-border-radius: 0.75rem;
+    --bs-card-cap-bg: transparent;
+}
+
+body .dropdown-menu,
+body .modal-content {
+    --bs-dropdown-bg: var(--ts-surface);
+    --bs-modal-bg: var(--ts-surface);
+    --bs-dropdown-border-color: var(--ts-surface-border);
+}
+
+body .form-control,
+body .form-select {
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+}
+
+body .form-control:focus,
+body .form-select:focus,
+body .form-check-input:focus {
+    border-color: var(--ts-accent);
+    box-shadow: 0 0 0 0.2rem rgba(var(--ts-accent-rgb), 0.35);
+}
+
+body .form-check-input:checked {
+    background-color: var(--ts-accent);
+    border-color: var(--ts-accent);
+}
+
+body .form-text {
+    color: var(--bs-secondary-color);
+}
+
+/* ---------- Buttons: amber is the one accent ---------- */
+body .btn {
+    --bs-btn-font-weight: 500;
+}
+
+body .btn-primary {
+    --bs-btn-color: var(--ts-navy);
+    --bs-btn-bg: var(--ts-accent);
+    --bs-btn-border-color: var(--ts-accent);
+    --bs-btn-hover-color: var(--ts-navy);
+    --bs-btn-hover-bg: var(--ts-accent-hover);
+    --bs-btn-hover-border-color: var(--ts-accent-hover);
+    --bs-btn-active-color: var(--ts-navy);
+    --bs-btn-active-bg: var(--ts-accent-active);
+    --bs-btn-active-border-color: var(--ts-accent-active);
+    --bs-btn-disabled-color: var(--ts-navy);
+    --bs-btn-disabled-bg: var(--ts-accent);
+    --bs-btn-disabled-border-color: var(--ts-accent);
+    --bs-btn-focus-shadow-rgb: 12, 200, 246;
+}
+
+:focus-visible {
+    outline: 2px solid var(--ts-accent);
+    outline-offset: 2px;
+}
+
+/* ---------- Tabs and pills ---------- */
+body .nav-tabs {
+    --bs-nav-tabs-border-color: var(--bs-border-color);
+    --bs-nav-tabs-link-active-bg: var(--ts-surface);
+    --bs-nav-tabs-link-active-color: var(--bs-emphasis-color);
+    --bs-nav-tabs-link-active-border-color: var(--bs-border-color) var(--bs-border-color) var(--ts-surface);
+    --bs-nav-link-color: var(--bs-secondary-color);
+    --bs-nav-link-hover-color: var(--bs-emphasis-color);
+}
+
+body .nav-tabs .nav-link.active {
+    box-shadow: inset 0 3px 0 var(--ts-accent);
+    font-weight: 600;
+}
+
+body .nav-pills {
+    --bs-nav-pills-link-active-bg: var(--ts-accent);
+    --bs-nav-pills-link-active-color: var(--ts-navy);
+    --bs-nav-link-color: var(--bs-secondary-color);
+    --bs-nav-link-hover-color: var(--bs-emphasis-color);
+}
+
+/* ---------- Tables and alerts ---------- */
+body .table {
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--bs-border-color);
+}
+
+body .alert {
+    --bs-alert-border-radius: 0.6rem;
+}
+
+pre {
+    background-color: var(--bs-tertiary-bg);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+[data-bs-theme=dark] .element {
+    color: var(--bs-primary-text-emphasis);
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+/* ---------- Lists (paired devices) ---------- */
+body .list-group,
+body .list-group-item-light {
+    --bs-list-group-bg: transparent;
+    --bs-list-group-color: var(--bs-body-color);
+    --bs-list-group-border-color: var(--bs-border-color);
+    background-color: transparent;
+    color: var(--bs-body-color);
+}
+
+/* ---------- Settings page: section menu on the left ---------- */
+.settings-layout {
+    display: grid;
+    grid-template-columns: 15rem minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.settings-menu {
+    position: sticky;
+    top: 1rem;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+}
+
+.settings-menu .nav-link {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.45rem;
+}
+
+.settings-menu .nav-link:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.settings-menu .nav-link.active {
+    font-weight: 600;
+}
+
+/* Separates everyday sections from the ones most people never need */
+.settings-menu-heading {
+    margin: 0.75rem 0.75rem 0.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--ts-surface-border);
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color);
+}
+
+.settings-content .config-page {
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+}
+
+.settings-content .buttons {
+    position: sticky;
+    bottom: 0;
+    padding: 0.9rem 0;
+    background-color: var(--bs-body-bg);
+}
+
+/* Narrow screens: the menu becomes a scrolling row above the settings */
+@media (max-width: 767.98px) {
+    .settings-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+    }
+
+    .settings-menu {
+        position: static;
+        overflow-x: auto;
+    }
+
+    .settings-menu .nav {
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+    }
+
+    .settings-menu .nav-link {
+        white-space: nowrap;
+    }
+
+    .settings-menu-heading {
+        display: none;
+    }
+}
+
+/* Panels on other pages that reuse the settings panel class */
+.config-page {
+    padding: 1em;
+}
+
+/* ---------- Home page ---------- */
+.home-lead {
+    color: var(--bs-secondary-color);
+}
+
+.home-status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.home-status-item {
+    padding: 1.1rem 1.4rem 1.2rem;
+    border-left: 4px solid transparent;
+}
+
+.home-status-item + .home-status-item {
+    box-shadow: -1px 0 0 var(--ts-surface-border);
+}
+
+.home-status-item dt {
+    font-weight: 400;
+    color: var(--bs-secondary-color);
+}
+
+.home-status-item dd {
+    font-family: var(--ts-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+    margin: 0.1rem 0 0.4rem;
+}
+
+.home-status-bad {
+    border-left-color: var(--bs-danger);
+}
+
+.home-steps {
+    margin: 1rem 0 1.25rem;
+    padding-left: 1.3rem;
+    max-width: 44rem;
+}
+
+.home-steps li {
+    margin-bottom: 0.45rem;
+}
+
+/* ---------- App editor: collapsed sections ---------- */
+.app-more {
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.6rem;
+    padding: 0 1rem;
+}
+
+.app-more > summary {
+    cursor: pointer;
+    padding: 0.75rem 0;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+}
+
+.app-more[open] > summary {
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--ts-surface-border);
+}
+
+.app-more[open] {
+    padding-bottom: 0.5rem;
+}
+
+/* ---------- Sign-in and first-run pages ---------- */
+body .auth-card {
+    padding: 2rem 2rem 1.5rem;
+}
+
+.auth-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: -2rem -2rem 1.5rem;
+    padding: 1.5rem 1rem;
+    background-color: var(--ts-navy);
+    border-bottom: 2px solid var(--ts-accent);
+    border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.auth-brand img {
+    height: 44px;
+    width: auto;
+}
+
+.auth-brand .brand-word {
+    font-family: var(--ts-display);
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+}
+
+.auth-brand .brand-word b {
+    font-weight: 600;
+    color: var(--ts-accent);
+}
+
+.auth-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ---------- Applications list ---------- */
+.app-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.app-row {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.8rem 1rem;
+    border-left: 3px solid transparent;
+}
+
+.app-row + .app-row {
+    border-top: 1px solid var(--ts-surface-border);
+}
+
+.app-row.app-running {
+    border-left-color: var(--ts-accent);
+    background-color: rgba(var(--ts-accent-rgb), 0.06);
+}
+
+.app-row.dragover {
+    box-shadow: inset 0 2px 0 var(--ts-accent);
+}
+
+.app-grip {
+    color: var(--bs-secondary-color);
+    cursor: grab;
+    opacity: 0.6;
+}
+
+.app-row:hover .app-grip {
+    opacity: 1;
+}
+
+.app-monogram {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.6rem;
+    background-color: var(--ts-navy);
+    color: var(--ts-accent);
+    font-family: var(--ts-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.app-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+    overflow-wrap: anywhere;
+}
+
+.app-badge {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 1rem;
+    background-color: var(--ts-accent);
+    color: var(--ts-navy);
+    font-size: 0.78rem;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+/* Added by Keep my games in sync */
+.app-badge.app-badge-synced {
+  background: transparent;
+  color: var(--bs-secondary-color);
+  border: 1px solid var(--bs-border-color);
+}
+
+.app-actions {
+    flex: none;
+    display: flex;
+    gap: 0.4rem;
+}
+
+.app-actions .btn {
+    --bs-btn-padding-y: 0.3rem;
+    --bs-btn-padding-x: 0.7rem;
+}
+
+/* Outline buttons read too faintly on the dark navy */
+html[data-bs-theme=dark] body .btn-outline-secondary {
+    --bs-btn-color: var(--bs-body-color);
+    --bs-btn-border-color: var(--ts-outline);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: var(--bs-border-color);
+    --bs-btn-hover-border-color: var(--ts-outline);
+}
+
+.app-list-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* Adding apps on the left, list tools on the right */
+.app-list-footer > :last-child {
+    margin-left: auto;
+}
+
+.app-tips ul {
+    margin: 0.25rem 0 0.75rem;
+    padding-left: 1.2rem;
+}
+
+@media (max-width: 575.98px) {
+    .app-row {
+        flex-wrap: wrap;
+    }
+
+    .app-grip {
+        display: none;
+    }
+
+    .app-name {
+        flex-basis: calc(100% - 3.5rem);
+    }
+
+    .app-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+/* ---------- Home page: who is playing ---------- */
+.home-players {
+    margin: -0.5rem 0 1.5rem;
+    padding: 1rem 1.4rem;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-left: 4px solid var(--ts-accent);
+    border-radius: 0.75rem;
+}
+
+.home-players ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.home-players li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.9rem;
+    padding: 0.25rem 0;
+}
+
+.home-player-name {
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+}
+
+.home-player-detail {
+    color: var(--bs-secondary-color);
+}
+
+.home-controller {
+    padding: 0.1rem 0.6rem;
+    border-radius: 1rem;
+    background-color: var(--bs-tertiary-bg);
+    font-size: 0.9rem;
+}
+
+.home-controller i {
+    color: var(--ts-accent);
+}
+
+.home-battery {
+    margin-left: 0.35rem;
+    color: var(--bs-secondary-color);
+}
+
+.home-battery i {
+    color: inherit;
+}
+
+.home-battery-low {
+    color: var(--bs-danger-text-emphasis);
+    font-weight: 600;
+}
+
+/* ---------- Main navigation as a sidebar on wide screens ----------
+   Below 992px it stays a top bar with a menu button, as before. */
+@media (min-width: 992px) {
+    body {
+        padding-left: 14rem;
+    }
+
+    .navbar.header.navbar-background {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1030;
+        width: 14rem;
+        align-items: stretch;
+        padding: 1.25rem 0.75rem 1rem;
+        border-bottom: 0;
+        border-right: 2px solid var(--ts-accent);
+        overflow-y: auto;
+    }
+
+    .navbar.header > .container {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        height: 100%;
+        max-width: none;
+        padding: 0;
+    }
+
+    .navbar.header .navbar-brand {
+        margin: 0 0 1.5rem;
+        padding: 0 0.4rem;
+        font-size: 1.2rem;
+    }
+
+    .navbar.header .navbar-collapse {
+        flex-direction: column;
+        align-items: stretch;
+        flex-grow: 1;
+    }
+
+    .navbar.header .navbar-nav {
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        gap: 0.15rem;
+        margin: 0 !important;
+    }
+
+    .navbar.header .nav-link {
+        padding: 0.55rem 0.75rem !important;
+        font-size: 1rem;
+    }
+
+    .navbar.header .nav-link .fa-fw {
+        margin-right: 0.35rem;
+    }
+
+    /* Theme switcher sits at the bottom of the sidebar and opens upward */
+    .navbar.header .nav-item-theme {
+        margin-top: auto;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .navbar.header .dropup-lg .dropdown-menu {
+        top: auto !important;
+        bottom: 100% !important;
+        left: 0 !important;
+        right: auto !important;
+        transform: none !important;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Settings page: its section menu sits just under the top of the page */
+    .settings-menu {
+        top: 1.5rem;
+    }
+}
+
+/* Menus use the accent for the chosen item, not Bootstrap's default blue */
+body .dropdown-menu {
+    --bs-dropdown-link-active-bg: var(--ts-accent);
+    --bs-dropdown-link-active-color: var(--ts-navy);
+}
+
+/* ---------- Update offer ---------- */
+.update-offer {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--ts-surface-border);
+    border-left: 4px solid var(--ts-accent);
+    border-radius: 0.6rem;
+}
+
+.update-title {
+    font-family: var(--ts-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+    margin-bottom: 0.25rem;
+}
+
+.update-desc {
+    color: var(--bs-secondary-color);
+}
+
+.update-progress {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+}
+
+.update-error {
+    flex-basis: 100%;
+    color: var(--bs-danger-text-emphasis);
+}
+
+.update-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* ---------- Settings: plain-language screen explainer ---------- */
+.screen-explainer {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--bs-tertiary-bg);
+    border-radius: 0.6rem;
+}
+
+.screen-explainer ul {
+    padding-left: 1.2rem;
+    margin-bottom: 0.75rem;
+}
+
+.screen-explainer li {
+    margin-bottom: 0.3rem;
+}
+
+.screen-status {
+    margin: 0;
+    font-weight: 600;
+}
+
+.screen-status-ok i {
+    color: var(--bs-success);
+}
+
+.screen-status-bad {
+    color: var(--bs-warning-text-emphasis);
+}
+
+/* Shown above sections most people never need to change */
+.experts-note {
+    margin: 0 0 1rem;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--ts-accent);
+    background-color: var(--ts-surface);
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: var(--bs-secondary-color);
+}
+
+/* Settings page heading, with the button that reruns setup */
+.settings-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+}
+
+.settings-title h1 {
+    margin-bottom: 0.5rem !important;
+}
+
+.settings-intro {
+    color: var(--bs-secondary-color);
+    margin-bottom: 1.5rem;
+    max-width: 46rem;
+}
+
+/* Stream health under each player on the home page */
+.home-health {
+    flex-basis: 100%;
+    margin-top: 0.5rem;
+}
+
+.home-health-verdict {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    margin-bottom: 0.25rem;
+}
+
+.home-health-verdict i {
+    margin-top: 0.2rem;
+}
+
+.home-health-ok i {
+    color: var(--bs-success);
+}
+
+.home-health-bad i {
+    color: var(--bs-warning);
+}
+
+.home-health-wait i {
+    color: var(--bs-secondary-color);
+}
+
+.home-health-verdict span.d-block {
+    color: var(--bs-secondary-color);
+    font-size: 0.92rem;
+    margin-top: 0.15rem;
+}
+
+.home-health-figures {
+    margin: 0 0 0 1.6rem;
+    font-size: 0.85rem;
+    color: var(--bs-secondary-color);
+}
+
+/* A game paused on the stream's screen, with a way to carry on at the PC */
+.home-paused {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-left: 4px solid var(--ts-accent);
+    border-radius: 0.75rem;
+}
+
+.home-paused p {
+    margin: 0;
+}
+
+.home-paused-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.home-paused-desc {
+    color: var(--bs-secondary-color);
+    max-width: 40rem;
+    margin-top: 0.25rem !important;
+}
+
+.home-paused-error {
+    color: var(--bs-warning-text-emphasis);
+    margin-top: 0.5rem !important;
+}
+
+/* ---------- Apps: add from this PC ---------- */
+.app-picker {
+    padding: 1.25rem 1.5rem 0;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.75rem;
+}
+
+.app-picker-lead {
+    color: var(--bs-secondary-color);
+    max-width: 46rem;
+}
+
+.app-picker-warning {
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.5rem;
+    background-color: var(--bs-warning-bg-subtle);
+    color: var(--bs-warning-text-emphasis);
+}
+
+.app-picker-search {
+    max-width: 22rem;
+    margin-bottom: 1rem;
+}
+
+.app-picker-group {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.25rem 0 0.5rem;
+}
+
+.app-picker-group span {
+    font-weight: 400;
+    color: var(--bs-secondary-color);
+    margin-left: 0.35rem;
+}
+
+.app-picker-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 0.4rem;
+}
+
+.app-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.app-picker-item:hover {
+    border-color: var(--ts-accent-soft);
+}
+
+.app-picker-item .form-check-input {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.app-picker-chosen {
+    border-color: var(--ts-accent);
+}
+
+.app-picker-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.app-picker-added {
+    cursor: default;
+    opacity: 0.65;
+}
+
+.app-picker-badge {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+}
+
+/* Kept in view while scrolling a long list */
+.app-picker-actions {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin: 1.25rem -1.5rem 0;
+    padding: 0.9rem 1.5rem;
+    background-color: var(--ts-surface);
+    border-top: 1px solid var(--ts-surface-border);
+    border-radius: 0 0 0.75rem 0.75rem;
+}
+
+/* ---------- Update banner, on every page ---------- */
+.update-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    background-color: var(--ts-navy);
+    color: #fff;
+    border-bottom: 2px solid var(--ts-accent);
+}
+
+.update-banner > i {
+    color: var(--ts-accent);
+    font-size: 1.1rem;
+}
+
+.update-banner-text {
+    flex: 1;
+    font-weight: 500;
+}
+
+.update-banner-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.35rem;
+    line-height: 1;
+}
+
+.update-banner-close:hover,
+.update-banner-close:focus-visible {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Another streaming host on this PC */
+.home-other-host {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin: 0 0 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.75rem;
+}
+
+.home-other-host p {
+    margin: 0;
+    flex: 1 1 24rem;
+}
+
+.home-other-host i {
+    color: var(--bs-warning);
+    margin-right: 0.35rem;
+}
+
+.home-other-host-paused {
+    color: var(--bs-secondary-color);
+}
+
+.home-other-host-error {
+    flex-basis: 100%;
+    color: var(--bs-warning-text-emphasis);
+}
+
+/* =====================================================================
+   Polish: one calm visual language across every page
+   ===================================================================== */
+
+/* Tonal buttons. The cyan primary button is the one loud action on a page; launch,
+   caution and delete actions are tinted, and only fill in when pointed at. */
+body .btn-success,
+body .btn-warning,
+body .btn-danger,
+body .btn-secondary {
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-disabled-border-color: transparent;
+}
+
+body .btn-success {
+    --bs-btn-bg: rgba(var(--ts-accent-rgb), 0.14);
+    --bs-btn-color: var(--ts-accent-soft);
+    --bs-btn-hover-bg: var(--ts-accent);
+    --bs-btn-hover-color: var(--ts-navy);
+    --bs-btn-active-bg: var(--ts-accent-active);
+    --bs-btn-active-color: var(--ts-navy);
+    --bs-btn-disabled-bg: rgba(var(--ts-accent-rgb), 0.08);
+    --bs-btn-disabled-color: var(--ts-accent-soft);
+}
+
+body .btn-warning {
+    --bs-btn-bg: rgba(255, 193, 7, 0.13);
+    --bs-btn-color: #f5cf63;
+    --bs-btn-hover-bg: #f5b90a;
+    --bs-btn-hover-color: #1d1400;
+    --bs-btn-active-bg: #e0a800;
+    --bs-btn-active-color: #1d1400;
+    --bs-btn-disabled-bg: rgba(255, 193, 7, 0.08);
+    --bs-btn-disabled-color: #f5cf63;
+}
+
+body .btn-danger {
+    --bs-btn-bg: rgba(239, 68, 68, 0.14);
+    --bs-btn-color: #ff9b9b;
+    --bs-btn-hover-bg: #e5484d;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-active-bg: #cf3a3f;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-disabled-bg: rgba(239, 68, 68, 0.08);
+    --bs-btn-disabled-color: #ff9b9b;
+}
+
+body .btn-secondary {
+    --bs-btn-bg: var(--bs-tertiary-bg);
+    --bs-btn-color: var(--bs-body-color);
+    --bs-btn-hover-bg: var(--bs-border-color);
+    --bs-btn-hover-color: var(--bs-emphasis-color);
+    --bs-btn-active-bg: var(--bs-border-color);
+    --bs-btn-active-color: var(--bs-emphasis-color);
+}
+
+html:root body .btn-success,
+html[data-bs-theme=light] body .btn-success {
+    --bs-btn-color: #075f86;
+    --bs-btn-disabled-color: #075f86;
+}
+
+html:root body .btn-warning,
+html[data-bs-theme=light] body .btn-warning {
+    --bs-btn-color: #7a5200;
+    --bs-btn-disabled-color: #7a5200;
+}
+
+html:root body .btn-danger,
+html[data-bs-theme=light] body .btn-danger {
+    --bs-btn-color: #b4232a;
+    --bs-btn-disabled-color: #b4232a;
+}
+
+html[data-bs-theme=dark] body .btn-success { --bs-btn-color: var(--ts-accent-soft); --bs-btn-disabled-color: var(--ts-accent-soft); }
+html[data-bs-theme=dark] body .btn-warning { --bs-btn-color: #f5cf63; --bs-btn-disabled-color: #f5cf63; }
+html[data-bs-theme=dark] body .btn-danger { --bs-btn-color: #ff9b9b; --bs-btn-disabled-color: #ff9b9b; }
+
+/* Disabled primary buttons read as disabled, not as a paler accent with white text */
+body .btn-primary:disabled,
+body .btn-primary.disabled {
+    opacity: 0.45;
+}
+
+/* Cards: one heading size, no stray gaps, a soft lift on light pages */
+body .card .card-body > h2,
+body .card .card-body > h3:first-child {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+body .card .card-body > h2 + br {
+    display: none;
+}
+
+html:root body .card,
+html[data-bs-theme=light] body .card {
+    box-shadow: 0 1px 2px rgba(16, 35, 59, 0.05), 0 6px 20px rgba(16, 35, 59, 0.05);
+}
+
+html[data-bs-theme=dark] body .card {
+    box-shadow: inset 0 1px 0 rgba(var(--ts-accent-rgb), 0.05);
+}
+
+/* Alerts: tinted panels rather than loud blocks */
+html[data-bs-theme=dark] body .alert-warning {
+    --bs-alert-bg: rgba(255, 193, 7, 0.08);
+    --bs-alert-border-color: rgba(255, 193, 7, 0.3);
+    --bs-alert-color: #f3d27a;
+}
+
+html[data-bs-theme=dark] body .alert-success {
+    --bs-alert-bg: rgba(25, 195, 125, 0.08);
+    --bs-alert-border-color: rgba(25, 195, 125, 0.3);
+    --bs-alert-color: #8fe3bd;
+}
+
+html[data-bs-theme=dark] body .alert-danger {
+    --bs-alert-bg: rgba(239, 68, 68, 0.09);
+    --bs-alert-border-color: rgba(239, 68, 68, 0.35);
+    --bs-alert-color: #ffb1b1;
+}
+
+html[data-bs-theme=dark] body .alert-info {
+    --bs-alert-bg: rgba(var(--ts-accent-rgb), 0.08);
+    --bs-alert-border-color: rgba(var(--ts-accent-rgb), 0.3);
+    --bs-alert-color: var(--ts-accent-soft);
+}
+
+/* Devices: what each device may do, in words */
+.device-name {
+    font-weight: 500;
+}
+
+.perm-badge {
+    display: inline-block;
+    margin-left: 0.6rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.perm-badge.perm-full {
+    background: rgba(var(--ts-accent-rgb), 0.12);
+    border-color: rgba(var(--ts-accent-rgb), 0.4);
+    color: var(--bs-link-color);
+}
+
+.perm-badge.perm-play {
+    background: rgba(25, 195, 125, 0.12);
+    border-color: rgba(25, 195, 125, 0.4);
+    color: #19a56c;
+}
+
+html[data-bs-theme=dark] .perm-badge.perm-play {
+    color: #8fe3bd;
+}
+
+.perm-badge.perm-watch {
+    background: var(--bs-tertiary-bg);
+    border-color: var(--bs-border-color);
+    color: var(--bs-secondary-color);
+}
+
+.perm-badge.perm-none {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.35);
+    color: #d14343;
+}
+
+/* Footer: help, reporting a problem, and the license notices */
+.page-footer {
+    margin: 3rem 0 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--bs-border-color);
+    color: var(--bs-secondary-color);
+    font-size: 0.9rem;
+}
+
+.page-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+}
+
+.page-footer-links a {
+    color: var(--bs-secondary-color);
+    text-decoration: none;
+}
+
+.page-footer-links a:hover,
+.page-footer-links a:focus-visible {
+    color: var(--bs-emphasis-color);
+}
+
+.page-footer-credit {
+    margin: 0.6rem 0 0;
+    font-size: 0.82rem;
+    opacity: 0.8;
+}
+
+/* ---------- Colour themes ----------
+   Chosen in Settings and worn by TunaReceive too. Deep Sea is the default above; each theme
+   below swaps the palette, and its dark-mode surfaces. Names match TunaReceive's. */
+html[data-ts-theme=reef] {
+    --ts-navy: #1a0a12;
+    --ts-deep: #3a1426;
+    --ts-accent: #ff7a59;
+    --ts-accent-soft: #ffb8a3;
+    --ts-blue: #e0457b;
+    --ts-accent-rgb: 255, 122, 89;
+    --ts-accent-hover: #ff9a80;
+    --ts-accent-active: #e8603f;
+    --ts-outline: #6b3550;
+}
+html[data-ts-theme=reef][data-bs-theme=dark] {
+    --bs-body-bg: #12060c;
+    --bs-body-color: #f1dfe5;
+    --bs-border-color: #4a2036;
+    --bs-tertiary-bg: #2a1220;
+    --ts-surface: #26101c;
+    --ts-surface-border: #4a2036;
+    --bs-link-color-rgb: 255, 184, 163;
+    --bs-link-hover-color-rgb: 255, 122, 89;
+}
+html[data-ts-theme=kelp] {
+    --ts-navy: #03140e;
+    --ts-deep: #0c3324;
+    --ts-accent: #5ee89a;
+    --ts-accent-soft: #b2f6cf;
+    --ts-blue: #23a86a;
+    --ts-accent-rgb: 94, 232, 154;
+    --ts-accent-hover: #8af0b6;
+    --ts-accent-active: #3fcf7d;
+    --ts-outline: #2f6650;
+}
+html[data-ts-theme=kelp][data-bs-theme=dark] {
+    --bs-body-bg: #020e0a;
+    --bs-body-color: #dcefe5;
+    --bs-border-color: #17402f;
+    --bs-tertiary-bg: #0c2a1f;
+    --ts-surface: #082319;
+    --ts-surface-border: #17402f;
+    --bs-link-color-rgb: 178, 246, 207;
+    --bs-link-hover-color-rgb: 94, 232, 154;
+}
+html[data-ts-theme=midnight] {
+    --ts-navy: #07060f;
+    --ts-deep: #1c1436;
+    --ts-accent: #b08cff;
+    --ts-accent-soft: #dccbff;
+    --ts-blue: #7651e0;
+    --ts-accent-rgb: 176, 140, 255;
+    --ts-accent-hover: #c7adff;
+    --ts-accent-active: #9369f0;
+    --ts-outline: #4b3c7a;
+}
+html[data-ts-theme=midnight][data-bs-theme=dark] {
+    --bs-body-bg: #050409;
+    --bs-body-color: #e6e1f5;
+    --bs-border-color: #2a2048;
+    --bs-tertiary-bg: #17112b;
+    --ts-surface: #120e24;
+    --ts-surface-border: #2a2048;
+    --bs-link-color-rgb: 220, 203, 255;
+    --bs-link-hover-color-rgb: 176, 140, 255;
+}
+html[data-ts-theme=gold] {
+    --ts-navy: #120d04;
+    --ts-deep: #33260a;
+    --ts-accent: #ffc23d;
+    --ts-accent-soft: #ffe2a3;
+    --ts-blue: #e3892a;
+    --ts-accent-rgb: 255, 194, 61;
+    --ts-accent-hover: #ffd474;
+    --ts-accent-active: #e8a91c;
+    --ts-outline: #6f5620;
+}
+html[data-ts-theme=gold][data-bs-theme=dark] {
+    --bs-body-bg: #0c0803;
+    --bs-body-color: #f1e9d4;
+    --bs-border-color: #43330f;
+    --bs-tertiary-bg: #261c07;
+    --ts-surface: #211806;
+    --ts-surface-border: #43330f;
+    --bs-link-color-rgb: 255, 226, 163;
+    --bs-link-hover-color-rgb: 255, 194, 61;
+}
+
+
+/* ---------- Seasonal themes (worn in their season when Seasonal themes is on) ---------- */
+html[data-ts-theme=halloween] {
+    --ts-navy: #120818;
+    --ts-deep: #2e1238;
+    --ts-accent: #ff8a1f;
+    --ts-accent-soft: #ffc48f;
+    --ts-blue: #9b5cff;
+    --ts-accent-rgb: 255, 138, 31;
+    --ts-accent-hover: #ffa552;
+    --ts-accent-active: #e6720a;
+    --ts-outline: #6b3a1a;
+}
+html[data-ts-theme=halloween][data-bs-theme=dark] {
+    --bs-body-bg: #0c0510;
+    --bs-body-color: #f6ecf8;
+    --bs-border-color: #3d1a47;
+    --bs-tertiary-bg: #241030;
+    --ts-surface: #1e0d26;
+    --ts-surface-border: #3d1a47;
+    --bs-link-color-rgb: 255, 196, 143;
+    --bs-link-hover-color-rgb: 255, 138, 31;
+}
+html[data-ts-theme=autumn] {
+    --ts-navy: #140b05;
+    --ts-deep: #3a1f0c;
+    --ts-accent: #ff9f43;
+    --ts-accent-soft: #ffd3a6;
+    --ts-blue: #c0502b;
+    --ts-accent-rgb: 255, 159, 67;
+    --ts-accent-hover: #ffb46d;
+    --ts-accent-active: #e88828;
+    --ts-outline: #6e4523;
+}
+html[data-ts-theme=autumn][data-bs-theme=dark] {
+    --bs-body-bg: #0d0703;
+    --bs-body-color: #f6ece2;
+    --bs-border-color: #4a2a14;
+    --bs-tertiary-bg: #2b180b;
+    --ts-surface: #24140a;
+    --ts-surface-border: #4a2a14;
+    --bs-link-color-rgb: 255, 211, 166;
+    --bs-link-hover-color-rgb: 255, 159, 67;
+}
+html[data-ts-theme=winter] {
+    --ts-navy: #06121f;
+    --ts-deep: #15304a;
+    --ts-accent: #bde8ff;
+    --ts-accent-soft: #e6f6ff;
+    --ts-blue: #6fb6e8;
+    --ts-accent-rgb: 189, 232, 255;
+    --ts-accent-hover: #d4f0ff;
+    --ts-accent-active: #9fd6f5;
+    --ts-outline: #3f6585;
+}
+html[data-ts-theme=winter][data-bs-theme=dark] {
+    --bs-body-bg: #040c15;
+    --bs-body-color: #eef6fc;
+    --bs-border-color: #22405e;
+    --bs-tertiary-bg: #11263b;
+    --ts-surface: #0c1e31;
+    --ts-surface-border: #22405e;
+    --bs-link-color-rgb: 230, 246, 255;
+    --bs-link-hover-color-rgb: 189, 232, 255;
+}
+html[data-ts-theme=summer] {
+    --ts-navy: #03222a;
+    --ts-deep: #0b4552;
+    --ts-accent: #ffd23f;
+    --ts-accent-soft: #ffe995;
+    --ts-blue: #ff7a59;
+    --ts-accent-rgb: 255, 210, 63;
+    --ts-accent-hover: #ffdd6e;
+    --ts-accent-active: #ebbb1f;
+    --ts-outline: #6d6326;
+}
+html[data-ts-theme=summer][data-bs-theme=dark] {
+    --bs-body-bg: #02171c;
+    --bs-body-color: #eefafb;
+    --bs-border-color: #145866;
+    --bs-tertiary-bg: #0a3a44;
+    --ts-surface: #06323c;
+    --ts-surface-border: #145866;
+    --bs-link-color-rgb: 255, 233, 149;
+    --bs-link-hover-color-rgb: 255, 210, 63;
+}
+
+/* Settings: the theme picker */
+.ts-theme-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+.ts-theme-swatch {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.9rem 0.55rem 0.6rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 999px;
+    background: var(--ts-surface);
+    color: var(--bs-body-color);
+    cursor: pointer;
+}
+.ts-theme-swatch:hover {
+    border-color: var(--ts-outline);
+}
+.ts-theme-swatch.active {
+    border-color: var(--ts-accent);
+    box-shadow: 0 0 0 0.15rem rgba(var(--ts-accent-rgb), 0.35);
+}
+.ts-theme-swatch:focus-visible {
+    outline: 2px solid var(--ts-accent);
+    outline-offset: 2px;
+}
+.ts-theme-dots {
+    display: inline-flex;
+}
+.ts-theme-dots span {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    border: 2px solid var(--ts-surface);
+}
+.ts-theme-dots span + span {
+    margin-left: -0.45rem;
+}
+
+/* ---------- The last seven days on the home page ---------- */
+.home-recap {
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.4rem 1.2rem;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.75rem;
+}
+
+.home-recap-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+}
+
+.home-recap-head h2 {
+    margin: 0;
+}
+
+.home-recap-total {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.home-recap-hours {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--bs-emphasis-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.home-recap-sub,
+.home-recap-empty {
+    color: var(--bs-secondary-color);
+}
+
+.home-recap-empty {
+    margin: 0.5rem 0 0;
+}
+
+.home-recap-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin: 1rem 0 1.25rem;
+}
+
+.home-recap-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.home-recap-bar-track {
+    position: relative;
+    width: 100%;
+    max-width: 2.75rem;
+    height: 4.5rem;
+    border-radius: 0.4rem;
+    background-color: var(--bs-tertiary-bg);
+    overflow: hidden;
+}
+
+.home-recap-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0.4rem 0.4rem 0 0;
+    background-color: rgba(var(--ts-accent-rgb), 0.5);
+}
+
+.home-recap-today .home-recap-bar {
+    background-color: var(--ts-accent);
+}
+
+.home-recap-weekday {
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color);
+}
+
+.home-recap-today .home-recap-weekday {
+    color: var(--bs-emphasis-color);
+    font-weight: 600;
+}
+
+.home-recap-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1rem 2rem;
+}
+
+.home-recap-subtitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: var(--bs-emphasis-color);
+}
+
+.home-recap-games {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.home-recap-games li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 0.75rem;
+    padding: 0.2rem 0 0.45rem;
+}
+
+.home-recap-game {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-recap-game-time {
+    color: var(--bs-secondary-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.home-recap-game-share {
+    grid-column: 1 / -1;
+    justify-self: start;
+    height: 3px;
+    margin-top: 0.25rem;
+    border-radius: 2px;
+    background-color: var(--ts-accent);
+}
+
+.home-recap-smooth {
+    margin: 0 0 0.5rem;
+}
+
+.home-recap-smooth-pct {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-right: 0.25rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.home-recap-smooth-good {
+    color: var(--bs-success-text-emphasis);
+}
+
+.home-recap-smooth-fair {
+    color: var(--bs-warning-text-emphasis);
+}
+
+.home-recap-smooth-poor {
+    color: var(--bs-danger-text-emphasis);
+}
+
+.home-recap-facts {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--bs-secondary-color);
+}
+
+/* ---------- Message to the TV, under Playing now ---------- */
+.home-message {
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--ts-surface-border);
+}
+
+.home-message-label {
+    display: block;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+    margin-bottom: 0.5rem;
+}
+
+.home-message-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+}
+
+.home-message-quick .btn {
+    border-radius: 1rem;
+}
+
+.home-message-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.home-message-row .form-control {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.home-message-device {
+    flex: 0 0 auto;
+    width: auto;
+}
+
+.home-message-row .btn {
+    flex: 0 0 auto;
+}
+
+.home-message-status {
+    margin: 0.5rem 0 0;
+    color: var(--bs-secondary-color);
+}
+
+.home-message-error {
+    color: var(--bs-danger-text-emphasis);
+}
+
+@media (max-width: 575.98px) {
+    .home-message-row {
+        flex-wrap: wrap;
+    }
+
+    .home-message-device {
+        width: 100%;
+    }
+}
+
+.home-sounds {
+    margin-top: 0.9rem;
+}
+
+.home-sound {
+    display: inline-flex;
+    align-items: center;
+}
+
+.home-sound-remove {
+    padding: 0 0.3rem;
+    color: var(--bs-secondary-color);
+}
+
+.home-sound-add {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.home-sound-add .form-control {
+    flex: 1 1 14rem;
+    width: auto;
+}
+
+.home-sound-add .home-message-status {
+    flex-basis: 100%;
+}
+
+/* ---------- A game drawing too few frames ---------- */
+.home-fps-note {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    margin-top: 0.6rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.6rem;
+    background-color: var(--bs-warning-bg-subtle);
+    border: 1px solid var(--bs-warning-border-subtle);
+}
+
+.home-fps-note i {
+    margin-top: 0.2rem;
+    color: var(--bs-warning-text-emphasis);
+}
+
+.home-fps-note p {
+    margin: 0;
+}
+
+.home-fps-title {
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+}
+
+.home-fps-desc {
+    color: var(--bs-secondary-color);
+    font-size: 0.92rem;
+}
+
+.home-fps-reminder {
+    margin: 0.8rem 0 0;
+}
+
+/* ---------- Screenshots and clips ---------- */
+.home-captures {
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.4rem 1.2rem;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.75rem;
+}
+
+.home-captures-where {
+    color: var(--bs-secondary-color);
+    font-size: 0.92rem;
+}
+
+.home-captures-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 0.75rem;
+}
+
+.home-captures-grid a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.home-captures-grid img,
+.home-capture-clip {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    background-color: var(--bs-tertiary-bg);
+}
+
+.home-capture-clip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    color: var(--ts-accent);
+}
+
+.home-captures-grid a:hover img,
+.home-captures-grid a:focus-visible img {
+    outline: 2px solid var(--ts-accent);
+    outline-offset: 2px;
+}
+
+.home-capture-name {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-milestones {
+    margin-top: 1.1rem;
+}
+
+.home-milestones ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.home-milestones li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 1rem;
+    background-color: var(--bs-tertiary-bg);
+    font-size: 0.9rem;
+}
+
+.home-milestones li i {
+    color: var(--bs-warning-text-emphasis);
+}
+
+.home-milestone-new {
+    outline: 2px solid var(--ts-accent);
+}
+
+.home-milestone-date {
+    color: var(--bs-secondary-color);
+    font-size: 0.8rem;
+}
+
+/* Troubleshooting: Wi-Fi channels */
+.ts-wifi-table {
+    max-width: 32rem;
+}
+
+.ts-wifi-best td {
+    font-weight: 600;
+}
+
+/* ---------- The Live page on a phone ---------- */
+.home-phone {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.4rem;
+    background-color: var(--ts-surface);
+    border: 1px solid var(--ts-surface-border);
+    border-radius: 0.75rem;
+}
+
+.home-phone-qr {
+    flex: 0 0 9rem;
+    width: 9rem;
+    padding: 0.4rem;
+    background: #ffffff;
+    border-radius: 0.5rem;
+}
+
+.home-phone-qr svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.home-watch h2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.home-watch-live,
+.home-watch-off {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.home-watch-live {
+    background: #d92d20;
+    color: #ffffff;
+}
+
+.home-watch-off {
+    background: var(--ts-surface-border);
+    color: var(--bs-secondary-color);
+    font-weight: 600;
+}
+
+.home-watch-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #ffffff;
+    animation: home-watch-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes home-watch-pulse {
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-watch-dot {
+        animation: none;
+    }
+}
+
+.home-phone-url {
+    font-family: inherit;
+    word-break: break-all;
+}
+
+.home-phone-note {
+    color: var(--bs-secondary-color);
+    font-size: 0.88rem;
+    margin-bottom: 0;
+}
+
+@media (max-width: 575.98px) {
+    .home-phone {
+        flex-direction: column;
+    }
+}
+
+.home-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin-bottom: 0.9rem;
+}
+
+.home-highlights .home-message-status {
+    margin: 0;
+}
+
+/* Devices: daily play time */
+.ts-playtime-input {
+    max-width: 6.5rem;
+}
+
+.home-playtime {
+    color: var(--bs-secondary-color);
+    font-size: 0.9rem;
+}
+
+.home-playtime i {
+    color: var(--ts-accent);
+}
+
+/* Devices > TV settings: one row per setting, the words on the left and the control on the right */
+.ts-tvset-section { margin-top: 1.5rem; }
+.ts-tvset-section h3 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+.ts-tvset-row {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 0.75rem 0.75rem;
+  border-top: 1px solid var(--bs-border-color);
+  border-left: 3px solid transparent;
+}
+.ts-tvset-row.ts-tvset-changed { border-left-color: var(--bs-warning); background: rgba(var(--bs-warning-rgb), 0.06); }
+.ts-tvset-text { flex: 1 1 auto; min-width: 0; }
+.ts-tvset-title { font-weight: 600; margin: 0; }
+.ts-tvset-summary { margin: 0.2rem 0 0; color: var(--bs-secondary-color); max-width: 70ch; }
+.ts-tvset-now, .ts-tvset-clash { margin: 0.25rem 0 0; font-size: 0.875rem; }
+.ts-tvset-clash { color: var(--bs-warning-text-emphasis); }
+.ts-tvset-control { flex: 0 0 16rem; display: flex; justify-content: flex-end; }
+.ts-tvset-control .form-switch .form-check-input { width: 2.75em; height: 1.4em; cursor: pointer; }
+.ts-tvset-control .form-select, .ts-tvset-control .input-group { width: 100%; }
+.ts-tvset-undo { font-size: inherit; color: inherit; vertical-align: baseline; }
+.ts-tvset-meta { margin-bottom: 0.5rem; }
+@media (max-width: 640px) {
+  .ts-tvset-row { flex-direction: column; gap: 0.5rem; }
+  .ts-tvset-control { flex-basis: auto; width: 100%; justify-content: flex-start; }
+}
+
+/* Home > What's new after an update */
+.home-whatsnew-item { margin-bottom: 1rem; }
+.home-whatsnew-text { white-space: pre-line; margin: 0; max-width: 80ch; }

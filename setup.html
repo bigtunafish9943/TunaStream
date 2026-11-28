@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <!-- TEMPLATE_HEADER - Used by Every UI Page -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TunaStream</title>
+<link rel="icon" type="image/x-icon" href="./images/tunastream.ico">
+<link href="./assets/css/tunastream.css" rel="stylesheet" />
+
+  <style>
+    .container.setup {
+      max-width: 48rem;
+      padding-top: 2.5rem;
+      padding-bottom: 3rem;
+    }
+
+    .setup-panel h1 {
+      font-family: var(--ts-display);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .setup-lead {
+      font-size: 1.1rem;
+      color: var(--bs-secondary-color);
+      max-width: 38rem;
+    }
+
+    .setup-progress {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .setup-progress span {
+      flex: 1;
+      height: 0.3rem;
+      border-radius: 1rem;
+      background-color: var(--ts-surface-border);
+    }
+
+    .setup-progress span.done {
+      background-color: var(--ts-blue);
+    }
+
+    .setup-progress span.current {
+      background-color: var(--ts-accent);
+    }
+
+    .setup-count {
+      font-size: 0.9rem;
+      color: var(--bs-secondary-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .setup-choices {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+
+    .setup-choices-two {
+      grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    }
+
+    .setup-choice {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+      text-align: left;
+      padding: 1rem 1.1rem;
+      background-color: var(--ts-surface);
+      color: inherit;
+      border: 2px solid var(--ts-surface-border);
+      border-radius: 0.75rem;
+      cursor: pointer;
+    }
+
+    .setup-choice:hover {
+      border-color: var(--ts-accent-soft);
+    }
+
+    .setup-choice:focus-visible {
+      outline: 3px solid var(--ts-accent);
+      outline-offset: 2px;
+    }
+
+    .setup-choice.selected {
+      border-color: var(--ts-accent);
+      box-shadow: inset 0 0 0 1px var(--ts-accent);
+    }
+
+    .setup-choice i {
+      font-size: 1.6rem;
+      color: var(--ts-blue);
+      margin-bottom: 0.25rem;
+    }
+
+    [data-bs-theme="dark"] .setup-choice i {
+      color: var(--ts-accent);
+    }
+
+    .setup-choice-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .setup-choice-desc {
+      font-size: 0.9rem;
+      color: var(--bs-secondary-color);
+    }
+
+    .setup-extra {
+      margin: -0.5rem 0 1.5rem;
+      padding: 0.9rem 1rem 0.9rem 3.4rem;
+      background-color: var(--ts-surface);
+      border: 1px solid var(--ts-surface-border);
+      border-radius: 0.75rem;
+    }
+
+    .setup-warning {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      background-color: var(--bs-warning-bg-subtle);
+      color: var(--bs-warning-text-emphasis);
+    }
+
+    .setup-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .setup-summary {
+      list-style: none;
+      padding: 0;
+      margin: 1.25rem 0 2rem;
+    }
+
+    .setup-summary li {
+      padding: 0.4rem 0;
+    }
+
+    .setup-summary i {
+      color: var(--ts-blue);
+      margin-right: 0.5rem;
+    }
+
+    [data-bs-theme="dark"] .setup-summary i {
+      color: var(--ts-accent);
+    }
+
+    .setup-subtitle {
+      font-family: var(--ts-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .setup-recs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .setup-rec {
+      padding: 1rem;
+      background-color: var(--ts-surface);
+      border: 1px solid var(--ts-surface-border);
+      border-radius: 0.75rem;
+    }
+
+    .setup-rec-name {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .setup-rec dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.2rem 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .setup-rec dt {
+      font-weight: 400;
+      color: var(--bs-secondary-color);
+    }
+
+    .setup-rec dd {
+      margin: 0;
+      font-weight: 600;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/setup-Cci6RZYp.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/init-BXreQeTq.js">
+  <link rel="modulepreload" crossorigin href="./assets/_plugin-vue_export-helper-DlAUqK2U.js">
+  <link rel="modulepreload" crossorigin href="./assets/Navbar-UKWnNTBA.js">
+  <link rel="stylesheet" crossorigin href="./assets/init-D_k9xtOw.css">
+  <link rel="stylesheet" crossorigin href="./assets/Navbar-BktbOm88.css">
+</head>
+
+<body id="app" v-cloak>
+  <Navbar></Navbar>
+  <div class="container setup">
+    <div class="setup-panel" v-if="loaded">
+
+      <!-- Progress through the questions -->
+      <div class="setup-progress" v-if="step > 0 && step !== 'done'" aria-hidden="true">
+        <span v-for="(q, i) in questions" :key="q" :class="{ done: i < step - 1, current: i === step - 1 }"></span>
+      </div>
+      <p class="setup-count" v-if="step > 0 && step < questions.length">
+        {{ $t('setup.step_of', { step: step, total: questions.length - 1 }) }}
+      </p>
+      <p class="setup-count" v-else-if="current === 'review'">{{ $t('setup.step_last') }}</p>
+
+      <!-- Start -->
+      <section v-if="step === 0">
+        <h1>{{ $t('setup.intro_title') }}</h1>
+        <p class="setup-lead">{{ $t('setup.intro_lead') }}</p>
+        <p class="setup-lead">{{ $t('setup.intro_change') }}</p>
+        <div class="setup-actions">
+          <button class="btn btn-link" @click="skip" :disabled="saving">{{ $t('setup.skip') }}</button>
+          <button class="btn btn-primary btn-lg" @click="step = 1">{{ $t('setup.start') }}</button>
+        </div>
+        <p class="setup-warning" v-if="error"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> {{ error }}</p>
+      </section>
+
+      <!-- What will you play on? -->
+      <section v-if="current === 'device'">
+        <h1>{{ $t('setup.device_title') }}</h1>
+        <p class="setup-lead">{{ $t('setup.device_lead') }}</p>
+        <div class="setup-choices">
+          <button v-for="d in deviceChoices" :key="d.id" type="button" class="setup-choice"
+                  :class="{ selected: answers.devices.includes(d.id) }"
+                  :aria-pressed="answers.devices.includes(d.id)" @click="toggleDevice(d.id)">
+            <i :class="d.icon" aria-hidden="true"></i>
+            <span class="setup-choice-title">{{ $t('setup.device_' + d.id) }}</span>
+            <span class="setup-choice-desc">{{ $t('setup.device_' + d.id + '_desc') }}</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Which controller? -->
+      <section v-if="current === 'controller'">
+        <h1>{{ $t('setup.controller_title') }}</h1>
+        <p class="setup-lead">{{ $t('setup.controller_lead') }}</p>
+        <div class="setup-choices">
+          <button v-for="c in controllerChoices" :key="c.id" type="button" class="setup-choice"
+                  :class="{ selected: answers.controller === c.id }"
+                  :aria-pressed="answers.controller === c.id" @click="answers.controller = c.id">
+            <i :class="c.icon" aria-hidden="true"></i>
+            <span class="setup-choice-title">{{ $t('setup.controller_' + c.id) }}</span>
+            <span class="setup-choice-desc">{{ $t('setup.controller_' + c.id + '_desc') }}</span>
+          </button>
+        </div>
+        <div class="form-check form-switch setup-extra" v-if="answers.controller === 'playstation'">
+          <input class="form-check-input" type="checkbox" role="switch" id="psButtons" v-model="answers.psButtons">
+          <label class="form-check-label" for="psButtons">
+            {{ $t('setup.controller_ps_buttons') }}
+            <span class="form-text d-block">{{ $t('setup.controller_ps_buttons_desc') }}</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Will you use the PC while someone streams? -->
+      <section v-if="current === 'screen'">
+        <h1>{{ $t('setup.screen_title') }}</h1>
+        <p class="setup-lead">{{ $t('setup.screen_lead') }}</p>
+        <div class="setup-choices setup-choices-two">
+          <button type="button" class="setup-choice" :class="{ selected: answers.screen === 'own' }"
+                  :aria-pressed="answers.screen === 'own'" @click="answers.screen = 'own'">
+            <i class="fas fa-clone" aria-hidden="true"></i>
+            <span class="setup-choice-title">{{ $t('setup.screen_own') }}</span>
+            <span class="setup-choice-desc">{{ $t('setup.screen_own_desc') }}</span>
+          </button>
+          <button type="button" class="setup-choice" :class="{ selected: answers.screen === 'mirror' }"
+                  :aria-pressed="answers.screen === 'mirror'" @click="answers.screen = 'mirror'">
+            <i class="fas fa-display" aria-hidden="true"></i>
+            <span class="setup-choice-title">{{ $t('setup.screen_mirror') }}</span>
+            <span class="setup-choice-desc">{{ $t('setup.screen_mirror_desc') }}</span>
+          </button>
+        </div>
+        <p class="setup-warning" v-if="answers.screen === 'own' && vdisplayStatus">
+          <i class="fas fa-triangle-exclamation" aria-hidden="true"></i> {{ $t('setup.screen_driver_problem') }}
+        </p>
+      </section>
+
+      <!-- When you stop playing -->
+      <section v-if="current === 'stop'">
+        <h1>{{ $t('setup.stop_title') }}</h1>
+        <p class="setup-lead">{{ $t('setup.stop_lead') }}</p>
+        <div class="setup-choices setup-choices-two">
+          <button type="button" class="setup-choice" :class="{ selected: answers.stop === 'keep' }"
+                  :aria-pressed="answers.stop === 'keep'" @click="answers.stop = 'keep'">
+            <i class="fas fa-pause" aria-hidden="true"></i>
+            <span class="setup-choice-title">{{ $t('setup.stop_keep') }}</span>
+            <span class="setup-choice-desc">{{ $t('setup.stop_keep_desc') }}</span>
+          </button>
+          <button type="button" class="setup-choice" :class="{ selected: answers.stop === 'close' }"
+                  :aria-pressed="answers.stop === 'close'" @click="answers.stop = 'close'">
+            <i class="fas fa-power-off" aria-hidden="true"></i>
+            <span class="setup-choice-title">{{ $t('setup.stop_close') }}</span>
+            <span class="setup-choice-desc">{{ $t('setup.stop_close_desc') }}</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Away from home? -->
+      <section v-if="current === 'away'">
+        <h1>{{ $t('setup.away_title') }}</h1>
+        <p class="setup-lead">{{ $t('setup.away_lead') }}</p>
+        <div class="setup-choices setup-choices-two">
+          <button type="button" class="setup-choice" :class="{ selected: answers.away === 'home' }"
+                  :aria-pressed="answers.away === 'home'" @click="answers.away = 'home'">
+            <i class="fas fa-house" aria-hidden="true"></i>
+            <span class="setup-choice-title">{{ $t('setup.away_home') }}</span>
+            <span class="setup-choice-desc">{{ $t('setup.away_home_desc') }}</span>
+          </button>
+          <button type="button" class="setup-choice" :class="{ selected: answers.away === 'away' }"
+                  :aria-pressed="answers.away === 'away'" @click="answers.away = 'away'">
+            <i class="fas fa-earth-americas" aria-hidden="true"></i>
+            <span class="setup-choice-title">{{ $t('setup.away_away') }}</span>
+            <span class="setup-choice-desc">{{ $t('setup.away_away_desc') }}</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Review, then save -->
+      <section v-if="current === 'review'">
+        <h1>{{ $t('setup.review_title') }}</h1>
+        <p class="setup-lead">{{ $t('setup.review_lead') }}</p>
+        <ul class="setup-summary">
+          <li v-for="line in summary" :key="line"><i class="fas fa-check" aria-hidden="true"></i> {{ line }}</li>
+        </ul>
+
+        <h2 class="setup-subtitle">{{ $t('setup.moonlight_title') }}</h2>
+        <p>{{ $t('setup.moonlight_lead') }}</p>
+        <div class="setup-recs">
+          <div class="setup-rec" v-for="d in chosenDevices" :key="d.id">
+            <p class="setup-rec-name"><i :class="d.icon" aria-hidden="true"></i> {{ $t('setup.device_' + d.id) }}</p>
+            <dl>
+              <dt>{{ $t('setup.rec_resolution') }}</dt><dd>{{ d.rec.resolution || $t('setup.rec_native') }}</dd>
+              <dt>{{ $t('setup.rec_fps') }}</dt><dd>{{ d.rec.fps }}</dd>
+              <dt>{{ $t('setup.rec_bitrate') }}</dt><dd>{{ d.rec.bitrate }}</dd>
+            </dl>
+            <p class="form-text mb-0">{{ $t('setup.device_' + d.id + '_tip') }}</p>
+          </div>
+        </div>
+        <p class="form-text">{{ $t('setup.moonlight_wifi') }}</p>
+        <p class="setup-warning" v-if="error"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> {{ error }}</p>
+      </section>
+
+      <!-- Saved -->
+      <section v-if="step === 'done'">
+        <h1>{{ $t('setup.done_title') }}</h1>
+        <p class="setup-lead" v-if="restarting" role="status">
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> {{ $t('setup.done_restarting') }}
+        </p>
+        <template v-else>
+          <p class="setup-lead">{{ pairedCount ? $t('setup.done_paired') : $t('setup.done_pair') }}</p>
+          <div class="setup-actions">
+            <a class="btn btn-outline-secondary" href="./">{{ $t('setup.done_home') }}</a>
+            <a class="btn btn-primary btn-lg" href="./pin" v-if="!pairedCount">{{ $t('setup.done_pair_button') }}</a>
+          </div>
+        </template>
+      </section>
+
+      <!-- Back and next -->
+      <div class="setup-actions" v-if="step > 0 && step !== 'done'">
+        <button class="btn btn-outline-secondary" @click="back" :disabled="saving">{{ $t('setup.back') }}</button>
+        <button class="btn btn-primary btn-lg" v-if="current !== 'review'" :disabled="!answered" @click="step++">
+          {{ $t('setup.next') }}
+        </button>
+        <button class="btn btn-primary btn-lg" v-else :disabled="saving" @click="finish">
+          <span class="spinner-border spinner-border-sm" v-if="saving" aria-hidden="true"></span>
+          {{ $t('setup.save') }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

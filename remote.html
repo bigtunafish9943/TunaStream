@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <!-- TEMPLATE_HEADER - Used by Every UI Page -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TunaStream</title>
+<link rel="icon" type="image/x-icon" href="./images/tunastream.ico">
+<link href="./assets/css/tunastream.css" rel="stylesheet" />
+
+  <link rel="apple-touch-icon" href="./images/tunastream-app-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="TunaStream">
+  <meta name="theme-color" content="#041431">
+  <style>
+    body {
+      padding-left: 0 !important;
+      background-color: var(--bs-body-bg);
+      overscroll-behavior: none;
+    }
+
+    .remote {
+      max-width: 34rem;
+      margin: 0 auto;
+      padding: 1rem 1rem 2rem;
+    }
+
+    .remote-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .remote-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      color: var(--bs-emphasis-color);
+      text-decoration: none;
+    }
+
+    .remote-brand img {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* The touchpad: the one big thing on the page */
+    .remote-pad {
+      position: relative;
+      height: min(52vh, 26rem);
+      border-radius: 1.1rem;
+      background-color: var(--ts-surface);
+      border: 1px solid var(--ts-surface-border);
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--bs-secondary-color);
+      padding: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .remote-pad.remote-active {
+      border-color: var(--ts-accent);
+    }
+
+    .remote-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .remote-buttons .btn {
+      padding: 0.9rem 0;
+      border-radius: 0.8rem;
+    }
+
+    .remote-section {
+      margin-top: 1.25rem;
+    }
+
+    .remote-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--bs-emphasis-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .remote-type {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .remote-keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+    }
+
+    .remote-keys .btn {
+      padding: 0.65rem 0;
+      font-size: 0.9rem;
+    }
+
+    .remote-status {
+      min-height: 1.4rem;
+      margin-top: 0.75rem;
+      color: var(--bs-secondary-color);
+      font-size: 0.9rem;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/remote-DJ27fCgN.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/init-BXreQeTq.js">
+  <link rel="stylesheet" crossorigin href="./assets/init-D_k9xtOw.css">
+</head>
+
+<body id="app" v-cloak>
+  <main class="remote">
+    <div class="remote-top">
+      <a class="remote-brand" href="./live">
+        <img src="./images/logo-tunastream-45.png" alt="">
+        {{ $t('live.remote_title') }}
+      </a>
+      <a class="btn btn-sm btn-outline-secondary" href="./live">{{ $t('live.remote_back') }}</a>
+    </div>
+
+    <div class="remote-pad" ref="pad" :class="{ 'remote-active': touching }"
+      @pointerdown="down" @pointermove="move" @pointerup="up" @pointercancel="cancel" @contextmenu.prevent>
+      <span v-if="!used">{{ $t('live.remote_pad_hint') }}</span>
+    </div>
+    <div class="remote-buttons">
+      <button type="button" class="btn btn-outline-secondary" @click="click(1)">{{ $t('live.remote_left') }}</button>
+      <button type="button" class="btn btn-outline-secondary" @click="click(3)">{{ $t('live.remote_right') }}</button>
+    </div>
+
+    <section class="remote-section">
+      <h2>{{ $t('live.remote_type_title') }}</h2>
+      <form class="remote-type" @submit.prevent="type">
+        <input class="form-control" v-model="text" :placeholder="$t('live.remote_type_placeholder')" autocomplete="off"
+          autocapitalize="off" spellcheck="false" maxlength="2000">
+        <button type="submit" class="btn btn-primary" :disabled="!text">{{ $t('live.remote_type_send') }}</button>
+      </form>
+    </section>
+
+    <section class="remote-section">
+      <h2>{{ $t('live.remote_keys_title') }}</h2>
+      <div class="remote-keys">
+        <button type="button" class="btn btn-outline-secondary" v-for="k in keys" :key="k.key" @click="key(k.key)"
+          :aria-label="$t(k.label)">
+          <i :class="k.icon" aria-hidden="true" v-if="k.icon"></i><span v-else>{{ $t(k.label) }}</span>
+        </button>
+      </div>
+    </section>
+
+    <p class="remote-status" role="status">{{ status }}</p>
+  </main>
+
+</body>
+
+</html>

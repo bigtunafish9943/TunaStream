@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <!-- TEMPLATE_HEADER - Used by Every UI Page -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TunaStream</title>
+<link rel="icon" type="image/x-icon" href="./images/tunastream.ico">
+<link href="./assets/css/tunastream.css" rel="stylesheet" />
+
+  <link rel="manifest" href="./live.webmanifest">
+  <link rel="apple-touch-icon" href="./images/tunastream-app-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="TunaStream">
+  <meta name="theme-color" content="#041431">
+  <style>
+    body {
+      padding-left: 0 !important;
+      background-color: var(--bs-body-bg);
+    }
+
+    .live {
+      max-width: 34rem;
+      margin: 0 auto;
+      padding: 1rem 1rem 3rem;
+    }
+
+    .live-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .live-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      color: var(--bs-emphasis-color);
+      text-decoration: none;
+    }
+
+    .live-brand img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .live-pc {
+      color: var(--bs-secondary-color);
+      font-size: 0.9rem;
+    }
+
+    .live-player {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      background-color: var(--ts-surface);
+      border: 1px solid var(--ts-surface-border);
+      margin-bottom: 1rem;
+    }
+
+    .live-cover {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.28;
+      filter: blur(2px);
+    }
+
+    .live-player-body {
+      position: relative;
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .live-cover-tile {
+      width: 6.5rem;
+      flex: 0 0 auto;
+      aspect-ratio: 2 / 3;
+      border-radius: 0.6rem;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .live-app {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--bs-emphasis-color);
+      line-height: 1.2;
+      margin: 0 0 0.2rem;
+    }
+
+    .live-device {
+      color: var(--bs-secondary-color);
+      margin: 0 0 0.6rem;
+    }
+
+    .live-fps {
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+    }
+
+    .live-fps-number {
+      font-size: 2.6rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--ts-accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .live-fps-label {
+      color: var(--bs-secondary-color);
+    }
+
+    .live-spark {
+      width: 100%;
+      height: 46px;
+      margin-top: 0.4rem;
+    }
+
+    .live-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0 1rem 1rem;
+      position: relative;
+    }
+
+    .live-chip {
+      padding: 0.2rem 0.65rem;
+      border-radius: 1rem;
+      background-color: var(--bs-tertiary-bg);
+      font-size: 0.85rem;
+    }
+
+    .live-chip-low {
+      color: var(--bs-danger-text-emphasis);
+      font-weight: 600;
+    }
+
+    .live-section {
+      margin-bottom: 1.2rem;
+    }
+
+    .live-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      color: var(--bs-emphasis-color);
+    }
+
+    .live-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .live-buttons .btn {
+      border-radius: 1.2rem;
+      padding: 0.45rem 0.9rem;
+    }
+
+    .live-message-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+
+    .live-status {
+      margin-top: 0.5rem;
+      color: var(--bs-secondary-color);
+      min-height: 1.5rem;
+    }
+
+    .live-full {
+      border-radius: 1rem;
+      white-space: nowrap;
+    }
+
+    .live-good { color: var(--bs-success-text-emphasis); }
+    .live-fair { color: var(--bs-warning-text-emphasis); }
+    .live-poor { color: var(--bs-danger-text-emphasis); }
+    .live-warn { color: var(--bs-warning-text-emphasis); }
+
+    .live-fps-number.live-good { color: var(--ts-accent); }
+
+    .live-spark-target {
+      stroke: var(--bs-secondary-color);
+      stroke-dasharray: 3 3;
+      opacity: 0.6;
+    }
+
+    /* Cards below the player: one per subject */
+    .live-card {
+      border-radius: 1rem;
+      background-color: var(--bs-tertiary-bg);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .live-card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--bs-emphasis-color);
+    }
+
+    .live-clips {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0.75rem;
+    }
+
+    .live-clips li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.4rem 0;
+      border-top: 1px solid var(--ts-surface-border);
+    }
+
+    .live-clip-actions {
+      display: flex;
+      gap: 0.4rem;
+      flex: 0 0 auto;
+    }
+
+    .live-qr {
+      width: min(15rem, 70vw);
+      background: #fff;
+      border-radius: 0.75rem;
+      padding: 0.5rem;
+    }
+
+    .live-qr svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .live-card h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin: 1rem 0 0.5rem;
+      color: var(--bs-emphasis-color);
+    }
+
+    .live-card .btn {
+      border-radius: 1.2rem;
+    }
+
+    /* Stream details: a label column and a value column, as on the TV */
+    .live-details {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.55rem 0.9rem;
+      margin: 0;
+    }
+
+    .live-details dt {
+      font-weight: 600;
+      color: var(--ts-accent);
+      font-size: 0.9rem;
+      padding-top: 0.05rem;
+    }
+
+    [data-bs-theme="light"] .live-details dt {
+      color: var(--bs-primary-text-emphasis);
+    }
+
+    .live-details dd {
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .live-sub {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--bs-secondary-color);
+    }
+
+    .live-sub.live-warn { color: var(--bs-warning-text-emphasis); }
+
+    .live-note {
+      margin: 0.75rem 0 0;
+      font-size: 0.85rem;
+      color: var(--bs-secondary-color);
+    }
+
+    .live-idle-line {
+      color: var(--bs-secondary-color);
+      margin: 0 0 1rem;
+    }
+
+    .live-idle-line i {
+      color: var(--ts-accent);
+      margin-right: 0.35rem;
+    }
+
+    .live-week {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--bs-emphasis-color);
+      margin-bottom: 0.75rem;
+    }
+
+    .live-week-sub {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--bs-secondary-color);
+    }
+
+    .live-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .live-day {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--bs-secondary-color);
+    }
+
+    .live-day-bar {
+      height: 56px;
+      display: flex;
+      align-items: flex-end;
+      background-color: var(--bs-secondary-bg);
+      border-radius: 0.35rem;
+      overflow: hidden;
+      margin-bottom: 0.2rem;
+    }
+
+    .live-day-bar span {
+      display: block;
+      width: 100%;
+      background-color: var(--ts-accent);
+      border-radius: 0.35rem 0.35rem 0 0;
+    }
+
+    .live-facts {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin: 0;
+    }
+
+    .live-facts dt {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--bs-secondary-color);
+    }
+
+    .live-facts dd {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .live-bars {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .live-bars li {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      margin-bottom: 0.55rem;
+      font-size: 0.9rem;
+    }
+
+    .live-bar-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .live-bar-value {
+      color: var(--bs-secondary-color);
+      padding-left: 0.5rem;
+    }
+
+    .live-bar {
+      grid-column: 1 / -1;
+      height: 6px;
+      border-radius: 3px;
+      background-color: var(--ts-accent);
+      margin-top: 0.2rem;
+    }
+
+    .live-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 0.5rem;
+    }
+
+    .live-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid var(--bs-border-color);
+    }
+
+    .live-list li:last-child {
+      border-bottom: 0;
+    }
+
+    .live-list li > span:first-child {
+      flex-shrink: 0;
+    }
+
+    .live-list li > span:last-child {
+      text-align: right;
+      color: var(--bs-secondary-color);
+    }
+
+    .live-tv {
+      padding-bottom: 0.6rem;
+      margin-bottom: 0.6rem;
+      border-bottom: 1px solid var(--bs-border-color);
+    }
+
+    .live-tv p {
+      margin: 0;
+    }
+
+    .live-tv-name {
+      font-weight: 700;
+    }
+
+    .live-tv-setup {
+      margin-top: 0.2rem !important;
+    }
+
+    .live-reminder {
+      margin-top: 0.9rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.6rem;
+      background-color: var(--bs-warning-bg-subtle);
+      color: var(--bs-warning-text-emphasis);
+      font-size: 0.9rem;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/live-CKsxTVto.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/init-BXreQeTq.js">
+  <link rel="modulepreload" crossorigin href="./assets/browser-D3jRZdga.js">
+  <link rel="stylesheet" crossorigin href="./assets/init-D_k9xtOw.css">
+</head>
+
+<body id="app" v-cloak>
+  <main class="live">
+    <div class="live-top">
+      <a class="live-brand" href="./">
+        <img src="./images/logo-tunastream-45.png" alt="">
+        TunaStream
+      </a>
+      <a class="btn btn-sm btn-outline-secondary ms-auto me-2" href="./remote">
+        <i class="fas fa-computer-mouse me-1" aria-hidden="true"></i>{{ $t('live.remote_open') }}
+      </a>
+      <a class="btn btn-sm btn-outline-secondary live-full" href="./">
+        {{ $t('live.full_page') }} <i class="fas fa-arrow-up-right-from-square ms-1" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <template v-if="players.length">
+      <template v-for="p in players" :key="p.device">
+        <section class="live-player">
+          <div class="live-cover" :style="coverStyle"></div>
+          <div class="live-player-body">
+            <div class="live-cover-tile" :style="coverStyle" v-if="app"></div>
+            <div class="flex-grow-1">
+              <p class="live-app">{{ app || $t('live.desktop') }}</p>
+              <p class="live-device">{{ $t('live.on_device', { device: p.device }) }} · {{ elapsed(p.device) }}</p>
+              <div class="live-fps" v-if="p.health">
+                <span class="live-fps-number" :class="'live-' + fpsLevel(p)">{{ shownFps(p) }}</span>
+                <span class="live-fps-label">{{ $t('live.fps_of', { target: p.health.targetFps }) }}</span>
+              </div>
+              <svg class="live-spark" v-if="(history[p.device] || []).length > 1" viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
+                <line x1="0" x2="120" :y1="40 - 38 * p.health.targetFps / sparkTop(p)" :y2="40 - 38 * p.health.targetFps / sparkTop(p)" class="live-spark-target" vector-effect="non-scaling-stroke" />
+                <polyline :points="sparkPoints(p)" fill="none" stroke="var(--ts-accent)" stroke-width="2" vector-effect="non-scaling-stroke" />
+              </svg>
+            </div>
+          </div>
+          <div class="live-chips">
+            <span class="live-chip" v-if="playLeft(p.device) !== null">
+              <i class="fas fa-hourglass-half" aria-hidden="true"></i> {{ $t('live.left', { left: minutesText(playLeft(p.device)) }) }}
+            </span>
+            <button type="button" class="live-chip btn btn-sm btn-outline-secondary" v-if="playLeft(p.device) !== null" @click="extendPlay(p.device)">{{ $t('live.extend') }}</button>
+            <template v-for="c in p.controllers" :key="c.controller">
+              <span class="live-chip" :class="{ 'live-chip-low': c.battery >= 0 && c.battery <= 15 && !c.charging }">
+                <i class="fas fa-gamepad" aria-hidden="true"></i>
+                {{ c.battery >= 0 ? (c.charging ? $t('live.battery_charging', { pct: c.battery }) : $t('live.battery', { pct: c.battery })) : $t('live.controller', { n: c.controller + 1 }) }}
+              </span>
+              <!-- A buzz on that controller: "your turn" -->
+              <button type="button" class="live-chip btn btn-sm btn-outline-secondary" @click="buzz(p.device, c.controller)"
+                :aria-label="$t('live.buzz_label', { n: c.controller + 1 })">
+                <i class="fas fa-bell" aria-hidden="true"></i> {{ $t('live.buzz') }}
+              </button>
+            </template>
+          </div>
+        </section>
+
+        <!-- The same as the stream details overlay on the TV -->
+        <section class="live-card" v-if="p.health">
+          <h2>{{ $t('live.details_title') }}</h2>
+          <dl class="live-details">
+            <dt>{{ $t('live.d_picture') }}</dt>
+            <dd>
+              {{ p.health.width }} × {{ p.health.height }}<template v-if="view(p).codec">, {{ codecName(view(p)) }}</template>
+              <span class="live-sub" v-if="view(p).scalePct && view(p).scalePct < 100">{{ $t('live.d_scaled', { w: Math.round(p.health.width * view(p).scalePct / 100), h: Math.round(p.health.height * view(p).scalePct / 100) }) }}</span>
+              <span class="live-sub" v-if="view(p).hdrPeakNits">{{ $t('live.d_hdr', { nits: view(p).hdrPeakNits }) }}</span>
+            </dd>
+
+            <dt>{{ $t('live.d_fps') }}</dt>
+            <dd>
+              {{ $t('live.d_fps_set', { n: p.health.targetFps }) }} ·
+              {{ $t('live.d_fps_tv') }} <strong :class="'live-' + fpsLevel(p)">{{ fixed(view(p).fps ?? p.health.fps, 1) }}</strong>
+              <template v-if="view(p).avgFps"> · {{ $t('live.d_fps_avg', { n: fixed(view(p).avgFps, 1) }) }}</template>
+              <span class="live-sub">{{ $t('live.d_fps_pc', { n: fixed(p.health.fps, 1) }) }}<template v-if="p.health.skippedPerSec >= 1"> {{ $t('live.d_fps_skipped', { n: fixed(p.health.skippedPerSec, 1) }) }}</template></span>
+              <span class="live-sub live-warn" v-if="p.health.slowGameMinutes > 0">{{ $t('live.d_fps_game_slow', { fps: Math.round(p.health.slowGameFps), min: p.health.slowGameMinutes }) }}</span>
+            </dd>
+
+            <dt>{{ $t('live.d_delay') }}</dt>
+            <dd>
+              <template v-if="p.health.deviceView">
+                {{ $t('live.d_delay_screen', { ms: view(p).latencyMs }) }} · {{ $t('live.d_delay_decode', { ms: fixed(view(p).decodeMs, 1) }) }}
+                <span class="live-sub" v-if="view(p).rttMs">{{ $t('live.d_delay_network', { ms: view(p).rttMs, var: view(p).rttVarMs }) }}</span>
+              </template>
+              <template v-else>{{ $t('live.d_from_tv_only') }}</template>
+              <span class="live-sub">{{ $t('live.d_delay_pc', { ms: fixed(p.health.pcMsAvg, 1), max: fixed(p.health.pcMsMax, 0) }) }}</span>
+            </dd>
+
+            <dt>{{ $t('live.d_steady') }}</dt>
+            <dd v-if="p.health.deviceView">
+              <strong :class="'live-' + steadyLevel(p)">{{ $t('live.steady_' + steadyLevel(p)) }}</strong>
+              <span class="live-sub">{{ $t('live.d_steady_detail', { late: fixed(view(p).late30Pct ?? view(p).slowPct, 1), lost: view(p).lossSeconds || 0 }) }}</span>
+              <span class="live-sub" v-if="p.health.recoveries">{{ $t('live.d_steady_repairs', { n: p.health.recoveries }) }}</span>
+            </dd>
+            <dd v-else>{{ $t('live.d_from_tv_only') }}</dd>
+
+            <dt>{{ $t('live.d_bitrate') }}</dt>
+            <dd>
+              {{ $t('live.d_bitrate_now', { now: Math.round(p.health.bitrateKbps / 1000) }) }}<template v-if="view(p).settingKbps"> · {{ $t('live.d_bitrate_max', { max: Math.round(view(p).settingKbps / 1000) }) }}</template>
+              <span class="live-sub">{{ $t('live.d_bitrate_repair', { pct: p.health.fecPercent }) }}<template v-if="p.health.splitFrames"> · {{ $t('live.d_split') }}</template></span>
+            </dd>
+
+            <dt>{{ $t('live.d_tv_net') }}</dt>
+            <dd>
+              <template v-if="view(p).net === 'wired'">{{ $t('live.net_wired') }}</template>
+              <template v-else-if="view(p).net === 'wifi'">
+                <strong :class="'live-' + signalLevel(view(p).signal)">{{ $t('live.net_wifi_signal', { pct: view(p).signal }) }}</strong>
+                <span class="live-sub">{{ $t('live.net_wifi_detail', { band: view(p).band, dbm: view(p).rssiDbm, link: view(p).linkMbps }) }}</span>
+              </template>
+              <template v-else>{{ $t('live.net_unknown') }}</template>
+            </dd>
+
+            <dt>{{ $t('live.d_pc_net') }}</dt>
+            <dd>{{ pcNetwork }}</dd>
+          </dl>
+          <p class="live-note" v-if="!p.health.deviceView || !view(p).codec">{{ $t('live.d_update_tv') }}</p>
+        </section>
+      </template>
+
+      <section class="live-card">
+        <h2>{{ $t('live.message_title') }}</h2>
+        <div class="live-buttons">
+          <button class="btn btn-outline-secondary" v-for="q in quickMessages" :key="q" :disabled="sending" @click="send(q, '')">{{ q }}</button>
+        </div>
+        <form class="live-message-row" @submit.prevent="send(text, '')">
+          <input class="form-control" type="text" maxlength="200" v-model="text" :placeholder="$t('live.message_placeholder')" :aria-label="$t('live.message_placeholder')">
+          <button class="btn btn-primary" type="submit" :disabled="sending || !text.trim()" :aria-label="$t('live.send')"><i class="fas fa-paper-plane"></i></button>
+        </form>
+        <template v-if="sounds.length">
+          <h3>{{ $t('live.sounds_title') }}</h3>
+          <div class="live-buttons">
+            <button class="btn btn-outline-secondary" v-for="s in sounds" :key="s.name" :disabled="sending" @click="send('', s.name)">
+              <i class="fas fa-volume-high" aria-hidden="true"></i> {{ s.name }}
+            </button>
+          </div>
+        </template>
+        <p class="live-status" role="status">{{ status }}</p>
+      </section>
+
+      <section class="live-section">
+        <a class="btn btn-primary w-100 mb-2" href="./watch">
+          <i class="fas fa-eye" aria-hidden="true"></i> {{ $t('live.watch') }}
+        </a>
+        <button class="btn btn-outline-danger w-100" :disabled="ending" @click="endSession">
+          <i class="fas fa-stop" aria-hidden="true"></i> {{ $t('live.end_session') }}
+        </button>
+      </section>
+    </template>
+
+    <template v-else-if="loaded">
+      <p class="live-idle-line"><i class="fas fa-couch" aria-hidden="true"></i> {{ $t('live.nobody') }}</p>
+
+      <!-- The last seven days -->
+      <section class="live-card" v-if="recap">
+        <h2>{{ $t('index.recap_title') }}</h2>
+        <template v-if="recap.seconds > 0">
+          <p class="live-week">{{ minutesText(recap.seconds) }}
+            <span class="live-week-sub">{{ recap.streams === 1 ? $t('index.recap_streams_one') : $t('index.recap_streams', { n: recap.streams }) }}</span>
+          </p>
+          <div class="live-days" aria-hidden="true">
+            <div class="live-day" v-for="d in recap.byDay" :key="d.start">
+              <div class="live-day-bar"><span :style="{ height: barHeight(d.seconds) }"></span></div>
+              <span class="live-day-name">{{ weekday(d.start) }}</span>
+            </div>
+          </div>
+          <dl class="live-facts">
+            <div v-if="recap.smoothPercent >= 0">
+              <dt>{{ $t('live.w_smooth') }}</dt>
+              <dd :class="'live-' + (recap.smoothPercent >= 90 ? 'good' : recap.smoothPercent >= 70 ? 'fair' : 'poor')">{{ recap.smoothPercent }}%</dd>
+            </div>
+            <div v-if="recap.avgFps">
+              <dt>{{ $t('live.w_fps') }}</dt>
+              <dd>{{ fixed(recap.avgFps, 1) }}</dd>
+            </div>
+            <div>
+              <dt>{{ $t('live.w_lost') }}</dt>
+              <dd>{{ recap.lostVideo }}</dd>
+            </div>
+            <div v-if="recap.longestSeconds">
+              <dt>{{ $t('live.w_longest') }}</dt>
+              <dd>{{ minutesText(recap.longestSeconds) }}</dd>
+            </div>
+          </dl>
+          <h3>{{ $t('index.recap_most_played') }}</h3>
+          <ul class="live-bars">
+            <li v-for="a in recap.topApps" :key="a.app">
+              <span class="live-bar-label">{{ a.app || $t('index.recap_unnamed_app') }}</span>
+              <span class="live-bar-value">{{ minutesText(a.seconds) }}</span>
+              <span class="live-bar" :style="{ width: Math.max(4, 100 * a.seconds / recap.topApps[0].seconds) + '%' }"></span>
+            </li>
+          </ul>
+          <template v-if="recap.devices && recap.devices.length > 1">
+            <h3>{{ $t('live.w_devices') }}</h3>
+            <ul class="live-list">
+              <li v-for="d in recap.devices" :key="d.device"><span>{{ d.device }}</span><span>{{ minutesText(d.seconds) }}</span></li>
+            </ul>
+          </template>
+        </template>
+        <p v-else class="live-note">{{ $t('index.recap_empty') }}</p>
+        <div class="live-reminder" v-for="r in (recap.fpsReminders || [])" :key="r.app" role="note">
+          <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+          {{ $t(r.width >= 3800 ? 'index.fps_reminder_title_4k' : 'index.fps_reminder_title', { app: r.app || $t('index.recap_unnamed_app'), fps: Math.round(r.fps), target: r.targetFps }) }}
+        </div>
+      </section>
+
+      <!-- Play time today -->
+      <section class="live-card" v-if="playLimits.length">
+        <h2>{{ $t('live.today_title') }}</h2>
+        <ul class="live-list">
+          <li v-for="d in playLimits" :key="d.name">
+            <span>{{ d.name }}</span>
+            <span>
+              {{ minutesText(d.usedSeconds || 0) }}<template v-if="d.leftSeconds >= 0"> · {{ $t('live.today_left', { left: minutesText(d.leftSeconds) }) }}</template>
+              <button type="button" class="btn btn-sm btn-outline-secondary ms-2" v-if="d.leftSeconds >= 0" @click="extendPlay(d.name)">{{ $t('live.extend') }}</button>
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- The TVs and how they're set up -->
+      <section class="live-card" v-if="tvs.length">
+        <h2>{{ $t('live.tvs_title') }}</h2>
+        <div class="live-tv" v-for="t in tvs" :key="t.uuid">
+          <p class="live-tv-name">{{ t.device }}</p>
+          <p class="live-sub">{{ $t('live.tv_seen', { when: ago(t.seen) }) }}<template v-if="t.version"> · TunaReceive {{ t.version }}</template></p>
+          <p class="live-tv-setup">{{ tvSetup(t) }}</p>
+          <p class="live-sub live-warn" v-if="Object.keys(t.pending || {}).length">{{ $t('live.tv_waiting', { n: Object.keys(t.pending).length }) }}</p>
+        </div>
+        <a class="btn btn-sm btn-outline-secondary" href="./pin#tv-settings">{{ $t('live.tv_change') }}</a>
+      </section>
+
+      <!-- This PC -->
+      <section class="live-card">
+        <h2>{{ $t('live.pc_title') }}</h2>
+        <ul class="live-list">
+          <li v-if="pcVersion"><span>TunaStream</span><span>{{ pcVersion }}</span></li>
+          <li><span>{{ $t('live.d_pc_net') }}</span><span>{{ pcNetwork }}</span></li>
+          <li><span>{{ $t('live.pc_screen') }}</span><span :class="{ 'live-poor': vdisplayProblem }">{{ vdisplayProblem ? $t('live.pc_screen_problem') : $t('live.pc_screen_ok') }}</span></li>
+          <li v-for="h in otherHosts.filter((x) => x.running)" :key="h.name"><span>{{ h.name }}</span><span class="live-warn">{{ $t('live.pc_other_host') }}</span></li>
+        </ul>
+      </section>
+
+      <!-- Milestones -->
+      <section class="live-card" v-if="recap && recap.milestones && recap.milestones.length">
+        <h2>{{ $t('index.milestones_title') }}</h2>
+        <ul class="live-list">
+          <li v-for="m in recap.milestones.slice(0, 4)" :key="m.id"><span><i class="fas fa-trophy me-1" aria-hidden="true"></i>{{ milestoneName(m.id) }}</span><span>{{ shortDate(m.at) }}</span></li>
+        </ul>
+      </section>
+
+      <!-- Screenshots and replays -->
+      <section class="live-card" v-if="captures">
+        <h2>{{ $t('index.captures_title') }}</h2>
+        <p v-if="captures.total">{{ $t('live.captures_count', { shots: captures.shots, clips: captures.clips }) }} {{ $t('live.captures_latest', { when: ago(captures.latest) }) }}</p>
+        <p v-else class="live-note">{{ $t('live.captures_none') }}</p>
+        <!-- The newest clips and screenshot, to save or share from the phone -->
+        <ul class="live-clips" v-if="captures.recent.length">
+          <li v-for="c in captures.recent" :key="c.kind + c.name">
+            <div class="live-clip-name">
+              <i :class="c.kind === 'clip' ? 'fas fa-film' : 'fas fa-image'" aria-hidden="true"></i>
+              {{ c.kind === 'clip' ? $t('live.clip') : $t('live.screenshot') }} · {{ ago(c.modified) }}
+              <span class="badge text-bg-primary ms-1" v-if="justNow(c.modified)">{{ $t('live.clip_new') }}</span>
+            </div>
+            <div class="live-clip-actions">
+              <a class="btn btn-sm btn-outline-secondary" :href="captureUrl(c)" :download="c.name">{{ $t('live.clip_save') }}</a>
+              <button type="button" class="btn btn-sm btn-primary" v-if="canShare" :disabled="sharing === c.name"
+                @click="shareCapture(c)">{{ $t('live.clip_share') }}</button>
+            </div>
+          </li>
+        </ul>
+        <a class="btn btn-sm btn-outline-secondary" href="./#captures-title">{{ $t('live.captures_open') }}</a>
+      </section>
+
+      <a class="btn btn-primary w-100 mt-2" href="./">{{ $t('live.open_home') }}</a>
+    </template>
+
+    <!-- Messages for TVs with TunaHome linked, when nobody's streaming -->
+    <section class="live-card mt-3" v-if="loaded && !players.length && linkedHomes.length">
+      <h2>{{ $t('live.message_title') }}</h2>
+      <div class="live-buttons mb-2">
+        <button class="btn btn-outline-secondary" v-for="q in quickMessages" :key="q" :disabled="sending" @click="send(q, '')">{{ q }}</button>
+      </div>
+      <form class="d-flex gap-2" @submit.prevent="send(homeText, ''); homeText = ''">
+        <input class="form-control" v-model="homeText" maxlength="200" :placeholder="$t('live.message_placeholder')">
+        <button class="btn btn-primary" type="submit" :disabled="sending || !homeText.trim()">{{ $t('index.message_send') }}</button>
+      </form>
+      <p class="live-status" role="status" v-if="status">{{ status }}</p>
+      <p class="live-note mt-2">{{ $t('live.homes_note', { tvs: linkedHomes.join(', ') }) }}</p>
+    </section>
+
+    <!-- Goodnight: TVs with TunaHome to sleep, streams over, the PC to sleep -->
+    <section class="live-card mt-3" v-if="loaded">
+      <h2><i class="fas fa-moon me-1" aria-hidden="true"></i>{{ $t('live.goodnight_title') }}</h2>
+      <p class="live-note">{{ $t('live.goodnight_intro') }}</p>
+      <button type="button" class="btn btn-outline-secondary" :disabled="goodnightSent" @click="goodnight">{{ goodnightSent ? $t('live.goodnight_sent') : $t('live.goodnight_button') }}</button>
+    </section>
+
+    <!-- Phones as controllers, for friends on the couch -->
+    <section class="live-card mt-3" v-if="loaded">
+      <h2><i class="fas fa-gamepad me-1" aria-hidden="true"></i>{{ $t('live.pads_title') }}</h2>
+      <p class="live-note">{{ $t('live.pads_intro') }}</p>
+      <div class="live-buttons">
+        <a class="btn btn-outline-secondary" href="./pad">{{ $t('live.pads_this_phone') }}</a>
+        <button type="button" class="btn btn-primary" :disabled="padInviting" @click="padInvite">{{ $t('live.pads_invite') }}</button>
+      </div>
+      <div v-if="padLink" class="mt-3 text-center">
+        <div class="live-qr mx-auto" v-html="padQr"></div>
+        <p class="live-note mt-2">{{ $t('live.pads_invite_note') }}</p>
+        <button type="button" class="btn btn-sm btn-outline-secondary" @click="copyPadLink">{{ padCopied ? $t('live.pads_copied') : $t('live.pads_copy') }}</button>
+      </div>
+      <p class="live-status" role="status" v-if="padError">{{ padError }}</p>
+    </section>
+  </main>
+
+</body>

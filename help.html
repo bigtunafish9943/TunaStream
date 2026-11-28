@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <!-- TEMPLATE_HEADER - Used by Every UI Page -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TunaStream</title>
+<link rel="icon" type="image/x-icon" href="./images/tunastream.ico">
+<link href="./assets/css/tunastream.css" rel="stylesheet" />
+
+  <style>
+    .help-page { max-width: 760px; }
+    .help-page h2 { font-size: 1.35rem; margin-bottom: .75rem; }
+    .help-page h3 { font-size: 1.05rem; margin: 1.25rem 0 .4rem; }
+    .help-page p, .help-page li { line-height: 1.55; }
+    .help-page .help-toc a { display: inline-block; margin: 0 1rem .4rem 0; }
+    .help-page table td, .help-page table th { padding: .45rem .6rem; vertical-align: top; }
+  </style>
+  <script type="module" crossorigin src="./assets/help-C9t9D6xD.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/init-BXreQeTq.js">
+  <link rel="modulepreload" crossorigin href="./assets/_plugin-vue_export-helper-DlAUqK2U.js">
+  <link rel="modulepreload" crossorigin href="./assets/Navbar-UKWnNTBA.js">
+  <link rel="stylesheet" crossorigin href="./assets/init-D_k9xtOw.css">
+  <link rel="stylesheet" crossorigin href="./assets/Navbar-BktbOm88.css">
+</head>
+
+<body id="app" v-cloak>
+  <Navbar></Navbar>
+  <div class="container help-page">
+    <h1 class="my-4">Help</h1>
+    <p>
+      Answers to the questions that come up most. To see exactly what happened, open the
+      <a href="./troubleshooting">Troubleshooting</a> page: it has the log and buttons to test rumble and repair
+      the virtual screen.
+    </p>
+    <nav class="help-toc">
+      <a href="#app-for-tv">The app for your TV</a>
+      <a href="#pairing">Pairing</a>
+      <a href="#stutter">Stutter</a>
+      <a href="#rumble">Rumble</a>
+      <a href="#8bitdo">8BitDo Ultimate 2</a>
+      <a href="#screen">The wrong screen</a>
+      <a href="#stopping">Stopping and starting</a>
+    </nav>
+
+    <div class="card p-2 my-4" id="app-for-tv">
+      <div class="card-body">
+        <h2>The app for your TV</h2>
+        <p>
+          On an Android TV box (like the NVIDIA Shield), phone or tablet, use <strong>TunaReceive</strong>, the
+          companion app made for TunaStream. Download the APK ending in <code>arm64-v8a</code> from
+          <a href="https://github.com/bigtunafish9943/TunaReceive/releases/latest" target="_blank" rel="noopener">TunaReceive's
+          releases</a>, send it to the device (LocalSend works well), and open it there to install. After that it
+          updates itself.
+        </p>
+        <p>On other devices, <a href="https://moonlight-stream.org" target="_blank" rel="noopener">Moonlight</a> works with TunaStream too.</p>
+      </div>
+    </div>
+
+    <div class="card p-2 my-4" id="pairing">
+      <div class="card-body">
+        <h2>Pairing a device</h2>
+        <ol>
+          <li>Put the device on the same network as this PC. Guest Wi-Fi networks usually block this.</li>
+          <li>Open TunaReceive. This PC appears by itself; if it doesn't, choose <em>Add PC Manually</em> and type
+            the address shown on TunaStream's home page.</li>
+          <li>Choose the PC. The device shows a four-digit PIN.</li>
+          <li>Here, open the <a href="./pin">PIN</a> page, type the PIN, name the device and press Send.</li>
+        </ol>
+        <p>Paired devices are remembered, including after reinstalling TunaStream.</p>
+      </div>
+    </div>
+
+    <div class="card p-2 my-4" id="stutter">
+      <div class="card-body">
+        <h2>The picture stutters</h2>
+        <p>
+          On a connection that shows no dropped packets, stutter usually means the stream asks for slightly more than
+          the Wi-Fi can carry at busy moments. Leave room:
+        </p>
+        <ul>
+          <li>In TunaReceive, open the PC's menu (hold the select button on it) and choose <em>Fit picture quality to
+            this connection</em>. It measures the connection and suggests a picture quality with headroom.</li>
+          <li>Connect this PC to the router with a cable if you can. That helps more than anything else.</li>
+          <li>Put the TV box on 5 GHz Wi-Fi, or a cable.</li>
+          <li>The home page shows the stream's health while someone is playing, and says whether the network, this PC
+            or the device is holding it back. With TunaReceive, it also shows what the TV sees.</li>
+          <li>If the home page says <em>This PC is on Wi-Fi</em>, every frame crosses the air twice. A cable from
+            this PC to the router is the biggest single improvement.</li>
+        </ul>
+        <h3>What adjusts itself</h3>
+        <p>With TunaReceive, the stream fits itself to the connection while you play, so a busy moment softens the
+          picture instead of stuttering:</p>
+        <ul>
+          <li><strong>Picture quality</strong> steps down a little as soon as frames start arriving slowly, before
+            any are lost, and further if they are lost. It steps back up once the connection clears.</li>
+          <li><strong>Picture size</strong> follows when the quality has dropped a long way: a 4K stream is sent at
+            1440p or 1080p and the TV stretches it to fill the screen, then goes back to 4K. The change happens
+            between two frames, without a pause.</li>
+          <li><strong>Packet-loss protection</strong> uses less on a clean connection and more on a rough one.</li>
+        </ul>
+        <p>Afterwards, TunaReceive can tell you how the stream went: hold the select button on the PC and choose
+          <em>How the last stream went</em>. If quality was turned down for most of the game, a lower Picture
+          quality setting gives a steadier picture.</p>
+        <h3>The TV adds delay</h3>
+        <p>TVs process the picture to make films look better, which adds delay that you feel in a game. TunaReceive
+          asks the TV for its game mode while a game is on screen. This needs a TV with auto low latency mode (ALLM),
+          turned on in the TV's HDMI settings. If the TV doesn't switch by itself, choose its Game mode by hand.</p>
+      </div>
+    </div>
+
+    <div class="card p-2 my-4" id="rumble">
+      <div class="card-body">
+        <h2>The controller doesn't rumble</h2>
+        <p>Find out which half is broken first. Start a stream, then press <em>Rumble now</em> on the
+          <a href="./troubleshooting">Troubleshooting</a> page.</p>
+        <h3>The controller buzzed</h3>
+        <p>TunaStream, the network and the app are fine; the game isn't sending rumble.</p>
+        <ul>
+          <li>Under Settings, set the controller type the PC sees to <strong>Xbox 360</strong>. Most PC games only
+            rumble an Xbox controller.</li>
+          <li>Check the game's own vibration setting, and Steam Input for that game.</li>
+        </ul>
+        <h3>Nothing happened</h3>
+        <ul>
+          <li>Check that Rumble is on in TunaReceive's settings.</li>
+          <li>A controller connected over Bluetooth only rumbles if the TV box supports rumble for it. Try it with a
+            cable, or in another app on the same device.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card p-2 my-4" id="8bitdo">
+      <div class="card-body">
+        <h2>8BitDo Ultimate 2 Wireless</h2>
+        <ul>
+          <li><strong>On a Shield or other Android TV box, connect it over Bluetooth in D mode.</strong> The 2.4G
+            adapter that comes with it is meant for Windows PCs; plugged into a TV box it is seen but doesn't control
+            anything.</li>
+          <li>Over Bluetooth, some Android TV boxes don't pass rumble to 8BitDo controllers. The Rumble now test shows
+            whether yours does.</li>
+          <li>Update the controller's firmware with 8BitDo Ultimate Software on a PC: connection and rumble fixes
+            arrive that way.</li>
+          <li>Back paddles reach the PC only as the buttons they're mapped to.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card p-2 my-4" id="screen">
+      <div class="card-body">
+        <h2>The game opens on the PC's monitor</h2>
+        <p>
+          Each stream gets its own screen on this PC, sized for the TV, and TunaStream makes it the main display while
+          someone is playing. Programs that remember their monitor (Steam's Big Picture, some games) can still open on
+          your monitor, so for three minutes after a game starts TunaStream moves its new windows onto the stream's
+          screen (for as long as it runs, in <em>Shared PC</em> mode). Windows you open yourself stay where they are.
+        </p>
+        <ul>
+          <li>If the TV shows a blank screen and the home page says the virtual screen has a problem, press
+            <em>Repair virtual screen</em> on the <a href="./troubleshooting">Troubleshooting</a> page.</li>
+          <li>The log shows each window it moved: <code>Moved a window onto the stream's screen</code>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card p-2 my-4" id="shared-pc">
+      <div class="card-body">
+        <h2>Using the PC while someone streams</h2>
+        <p>
+          Turn on <em>Shared PC</em> under <a href="./config#sharedpc">Settings &gt; Shared PC</a>. Your monitor stays the main
+          screen, so your taskbar, windows and notifications stay with you; the streamed game's windows are kept on
+          the TV's screen; only the game's sound goes to the stream, while yours stays on your speakers; and your
+          mouse can't wander onto the TV's screen.
+        </p>
+        <ul>
+          <li>Windows has one keyboard focus. When you click your own windows, most games keep running and keep
+            reading the controller, but some pause. When the controller is in use and you've left your mouse and
+            keyboard alone for 8 seconds, TunaStream gives the game focus back; anything you type or click comes
+            first. A game's "pause in background" option, if it has one, avoids the pause altogether.</li>
+          <li>On by default. If a game insists on opening full screen on your monitor, set it to <em>Windowed</em>
+            in its settings: TunaStream takes off the border and stretches it over the TV (<em>Windowed games fill
+            the TV</em>). Or turn on <em>Make the TV's screen the main one</em>, so games open there by themselves.</li>
+          <li><em>Do not disturb during streams</em> (on by default) keeps notifications from popping up over the
+            game; they wait in the notification centre. It also quiets them for you at the PC until the stream
+            ends. With the TV's screen as the main one, Windows' own windows (File Explorer, Settings, Task Manager,
+            dialogs) move to your screen like any program, but the taskbar's clock and the "Do you want to allow"
+            prompt stay on the TV, as Windows only draws them on the main screen.</li>
+          <li>Under <a href="./pin">Devices</a>, the <em>Controller only</em> preset keeps the TV's mouse and keyboard
+            off your desktop.</li>
+          <li>The log says which program's sound was sent to the stream: <code>Shared PC mode: ... sound goes to the
+            stream</code>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card p-2 my-4" id="play-time">
+      <div class="card-body">
+        <h2>Play time, messages and sounds</h2>
+        <p>
+          Set a daily limit for each device under <a href="./pin">Devices &gt; Daily play time</a>. The TV is warned at
+          10, 5 and 1 minute left, then the game closes, and that device can't start another stream until tomorrow.
+          <em>+15 min</em> on the home page or the phone page gives more time today.
+        </p>
+        <p>
+          While someone plays, the home page (and the phone page, from the QR code) can show a message on the TV or
+          play a sound. Add your own sounds with <em>Add a sound</em>: OGG, MP3 or WAV, a few seconds long.
+        </p>
+      </div>
+    </div>
+
+    <div class="card p-2 my-4" id="hdr">
+      <div class="card-body">
+        <h2>HDR looks washed out, too dark or too bright</h2>
+        <p>
+          Games pick their HDR brightness from what Windows says the screen can show. The stream's screen is a
+          virtual one, so Windows doesn't know your TV's real limits and reports a very bright screen; games then aim
+          for highlights the TV can't show. TunaReceive tells TunaStream how bright your TV says it can go, and the
+          home page shows it under Playing now.
+        </p>
+        <p>To fix it, calibrate the stream's screen once with Windows' own tool:</p>
+        <ol>
+          <li>Install <strong>Windows HDR Calibration</strong> from the Microsoft Store (free, Windows 11).</li>
+          <li>Start a stream with HDR on, from the device you calibrate for.</li>
+          <li>Open Windows HDR Calibration on the stream's screen (it opens on the main display; with
+            <em>Shared PC</em> on, drag it to the TV's screen first).</li>
+          <li>Follow its three test patterns with the controller, looking at the TV.</li>
+        </ol>
+        <p>
+          Windows keeps the result for that screen, and the stream's screen keeps the same identity for each device,
+          so it lasts. Games then aim for your TV's real brightness.
+        </p>
+      </div>
+    </div>
+
+    <div class="card p-2 my-4" id="stopping">
+      <div class="card-body">
+        <h2>Stopping and starting</h2>
+        <table class="table">
+          <thead>
+            <tr><th>What happened</th><th>What TunaStream does</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>You chose <em>End the session</em> in the app, or pressed End session on the home page</td>
+              <td>Closes the game, removes the stream's screen, and your monitor is the main display again.</td></tr>
+            <tr><td>You left the stream without ending it</td>
+              <td>Keeps the game running so you can carry on, from the TV or from this PC (the home page has a
+                button for that).</td></tr>
+            <tr><td>The connection dropped</td>
+              <td>Keeps the game running so the device can reconnect.</td></tr>
+          </tbody>
+        </table>
+        <p>To always close the game when the last device leaves, turn that on in Settings.</p>
+      </div>
+    </div>
+
+    <p class="my-4">
+      Still stuck? <a href="https://github.com/bigtunafish9943/TunaStream/issues" target="_blank" rel="noopener">Report a
+      problem</a>, and include the lines from the Troubleshooting page's log.
+    </p>
+  </div>
+
+</body>

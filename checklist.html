@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <!-- TEMPLATE_HEADER - Used by Every UI Page -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TunaStream</title>
+<link rel="icon" type="image/x-icon" href="./images/tunastream.ico">
+<link href="./assets/css/tunastream.css" rel="stylesheet" />
+
+  <style>
+    .check-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+      align-items: baseline;
+    }
+
+    .check-bar {
+      height: 0.5rem;
+      border-radius: 0.25rem;
+      background: var(--bs-secondary-bg);
+      overflow: hidden;
+      display: flex;
+      margin: 0.75rem 0 1.5rem;
+    }
+
+    .check-bar .works { background: var(--bs-success); }
+    .check-bar .problem { background: var(--bs-danger); }
+
+    .check-item {
+      border: 1px solid var(--bs-border-color);
+      border-left: 0.35rem solid var(--bs-border-color);
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .check-item.works { border-left-color: var(--bs-success); }
+    .check-item.problem { border-left-color: var(--bs-danger); }
+
+    .check-item h3 {
+      font-size: 1.1rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .check-where {
+      font-size: 0.8rem;
+      color: var(--bs-secondary-color);
+      margin-left: 0.5rem;
+      font-weight: normal;
+    }
+
+    .check-how, .check-expect {
+      margin-bottom: 0.4rem;
+      max-width: 70ch;
+    }
+
+    .check-expect strong, .check-how strong {
+      font-weight: 600;
+    }
+
+    .check-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .check-when {
+      font-size: 0.8rem;
+      color: var(--bs-secondary-color);
+      align-self: center;
+    }
+    .self-check {
+      border: 1px solid var(--bs-border-color);
+      border-radius: 0.5rem;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.5rem;
+      max-width: 70ch;
+    }
+
+    .self-row {
+      padding: 0.2rem 0;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/checklist-xmPDajUw.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/init-BXreQeTq.js">
+  <link rel="modulepreload" crossorigin href="./assets/_plugin-vue_export-helper-DlAUqK2U.js">
+  <link rel="modulepreload" crossorigin href="./assets/Navbar-UKWnNTBA.js">
+  <link rel="stylesheet" crossorigin href="./assets/init-D_k9xtOw.css">
+  <link rel="stylesheet" crossorigin href="./assets/Navbar-BktbOm88.css">
+</head>
+
+<body id="app" v-cloak>
+  <Navbar></Navbar>
+  <div class="container mb-5">
+    <h1 class="my-4">{{ $t('checklist.title') }}</h1>
+    <p style="max-width: 70ch">{{ $t('checklist.intro') }}</p>
+
+    <section class="self-check" aria-labelledby="selfcheck-title">
+      <h2 class="h5" id="selfcheck-title">{{ $t('checklist.self_title') }}</h2>
+      <p class="small text-muted mb-2">{{ $t('checklist.self_desc') }}</p>
+      <ul class="list-unstyled mb-0" v-if="selfChecks.length">
+        <li v-for="c in selfChecks" :key="c.id" class="self-row">
+          <i class="fas fa-fw" :class="c.state === 'ok' ? 'fa-circle-check text-success' : c.state === 'warn' ? 'fa-triangle-exclamation text-warning' : 'fa-circle-info text-secondary'" aria-hidden="true"></i>
+          <span class="visually-hidden">{{ $t('checklist.self_state_' + c.state) }}:</span>
+          {{ $t('checklist.self_' + c.id + '_' + c.state, { detail: c.detail }) }}
+        </li>
+      </ul>
+      <p class="small mb-0" v-else>{{ $t('checklist.self_loading') }}</p>
+      <div class="d-flex flex-wrap align-items-center gap-2 mt-2" v-if="selfChecks.length">
+        <button type="button" class="btn btn-sm btn-outline-secondary" @click="testCheer">{{ $t('checklist.self_cheer') }}</button>
+        <span class="small" role="status">{{ cheerTested ? $t('checklist.self_cheer_look') : '' }}</span>
+      </div>
+    </section>
+
+    <div class="check-summary">
+      <span><strong>{{ counts.works }}</strong> {{ $t('checklist.count_works') }}</span>
+      <span><strong>{{ counts.problem }}</strong> {{ $t('checklist.count_problem') }}</span>
+      <span><strong>{{ counts.left }}</strong> {{ $t('checklist.count_left') }}</span>
+      <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" @click="resetAll" v-if="counts.works + counts.problem > 0">
+        {{ $t('checklist.reset') }}
+      </button>
+    </div>
+    <div class="check-bar" role="img" :aria-label="$t('checklist.progress', { done: counts.works + counts.problem, total: items.length })">
+      <div class="works" :style="{ width: (100 * counts.works / items.length) + '%' }"></div>
+      <div class="problem" :style="{ width: (100 * counts.problem / items.length) + '%' }"></div>
+    </div>
+
+    <div class="alert alert-danger" v-if="error">{{ error }}</div>
+
+    <div v-for="item in items" :key="item.id" class="check-item" :class="stateOf(item.id)">
+      <h3>{{ $t('checklist.items.' + item.id + '.title') }}<span class="check-where">{{ $t('checklist.where_' + item.where) }}</span></h3>
+      <p class="check-how"><strong>{{ $t('checklist.how') }}</strong> {{ $t('checklist.items.' + item.id + '.how') }}</p>
+      <p class="check-expect"><strong>{{ $t('checklist.expect') }}</strong> {{ $t('checklist.items.' + item.id + '.expect') }}</p>
+      <div v-if="stateOf(item.id) === 'problem'" class="mt-2">
+        <label class="form-label small" :for="'note-' + item.id">{{ $t('checklist.note_label') }}</label>
+        <textarea class="form-control" rows="2" :id="'note-' + item.id" v-model="notes[item.id]"
+                  :placeholder="$t('checklist.note_placeholder')" @change="save(item.id, 'problem')"></textarea>
+      </div>
+      <div class="check-buttons">
+        <button type="button" class="btn btn-sm" :class="stateOf(item.id) === 'works' ? 'btn-success' : 'btn-outline-success'"
+                :aria-pressed="stateOf(item.id) === 'works'" @click="save(item.id, 'works')">
+          <i class="fas fa-check" aria-hidden="true"></i> {{ $t('checklist.works') }}
+        </button>
+        <button type="button" class="btn btn-sm" :class="stateOf(item.id) === 'problem' ? 'btn-danger' : 'btn-outline-danger'"
+                :aria-pressed="stateOf(item.id) === 'problem'" @click="save(item.id, 'problem')">
+          <i class="fas fa-xmark" aria-hidden="true"></i> {{ $t('checklist.problem') }}
+        </button>
+        <button type="button" class="btn btn-sm btn-link" v-if="stateOf(item.id)" @click="save(item.id, '')">
+          {{ $t('checklist.not_tried') }}
+        </button>
+        <span class="check-when" v-if="results[item.id]">{{ new Date(results[item.id].at * 1000).toLocaleString() }}</span>
+      </div>
+    </div>
+
+    <p class="mt-4" style="max-width: 70ch">{{ $t('checklist.problem_help') }}
+      <a href="./troubleshooting#tv_logs">{{ $t('checklist.problem_help_link') }}</a></p>
+  </div>
+
+</body>
+
+</html>
