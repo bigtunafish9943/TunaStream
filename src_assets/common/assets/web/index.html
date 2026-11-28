@@ -67,6 +67,30 @@
       </div>
     </dl>
 
+    <!-- Where the stream can be watched (a browser or a phone), and whether it's live now -->
+    <section class="home-phone home-watch" v-if="watchQr" aria-labelledby="watch-title">
+      <div class="home-phone-qr" v-html="watchQr" role="img" :aria-label="$t('index.watch_qr_label')"></div>
+      <div>
+        <h2 class="h5" id="watch-title">
+          {{ $t('index.watch_title') }}
+          <span class="home-watch-live" v-if="watchLive"><span class="home-watch-dot" aria-hidden="true"></span>{{ $t('index.watch_live') }}</span>
+          <span class="home-watch-off" v-else>{{ $t('index.watch_not_live') }}</span>
+        </h2>
+        <p v-if="currentAppName && playerNames">{{ $t('index.watch_now_app_on', { app: currentAppName, devices: playerNames }) }}</p>
+        <p v-else-if="currentAppName">{{ $t('index.watch_now_app', { app: currentAppName }) }}</p>
+        <p v-else-if="sharing && sharing.on">{{ $t('index.watch_now_screen') }}</p>
+        <p v-else>{{ $t('index.watch_when') }}</p>
+        <p class="home-phone-url">
+          <a :href="watchUrl">{{ watchUrl }}</a>
+          <button type="button" class="btn btn-sm btn-link p-0 ms-2" @click="copyWatchUrl">
+            <i class="fas" :class="watchCopied ? 'fa-check' : 'fa-copy'" aria-hidden="true"></i>
+            {{ watchCopied ? $t('index.watch_copied') : $t('index.watch_copy') }}
+          </button>
+        </p>
+        <p class="home-phone-note">{{ $t('index.watch_note') }}</p>
+      </div>
+    </section>
+
     <div class="alert alert-warning" v-if="vdisplayFailed">
       {{ $t('index.vdisplay_failed') }}
       <a href="./troubleshooting#vdisplay">{{ $t('index.vdisplay_failed_fix') }}</a>
@@ -484,6 +508,9 @@
         recapTimer: null,
         phoneQr: '',
         phoneUrl: '',
+        watchQr: '',
+        watchUrl: '',
+        watchCopied: false,
         playLimits: [],
         captures: [],
         highlights: { busy: false, status: '', error: false },
@@ -714,11 +741,28 @@
         const host = lanAddress && lanAddress !== '0.0.0.0' ? lanAddress : location.hostname;
         if (!host || host === 'localhost' || host === '127.0.0.1') return;
         this.phoneUrl = `https://${host}:${location.port || 47990}/live`;
+        // And one for the Watch page, where a browser or a phone watches what's streaming
+        this.watchUrl = `https://${host}:${location.port || 47990}/watch`;
+        try {
+          this.watchQr = await QRCode.toString(this.watchUrl, { type: 'svg', margin: 1, errorCorrectionLevel: 'M',
+                                                               color: { dark: '#041431', light: '#ffffff' } });
+        } catch (e) {
+          this.watchQr = '';
+        }
         try {
           this.phoneQr = await QRCode.toString(this.phoneUrl, { type: 'svg', margin: 1, errorCorrectionLevel: 'M',
                                                                color: { dark: '#041431', light: '#ffffff' } });
         } catch (e) {
           this.phoneQr = '';
+        }
+      },
+      async copyWatchUrl() {
+        try {
+          await navigator.clipboard.writeText(this.watchUrl);
+          this.watchCopied = true;
+          setTimeout(() => { this.watchCopied = false }, 2000);
+        } catch (e) {
+          window.prompt(this.$t('index.watch_copy'), this.watchUrl);
         }
       },
       async loadPlayLimits() {
@@ -1138,6 +1182,14 @@
       }
     },
     computed: {
+      /** A TV is streaming, or the PC's screen is shared: the Watch page has a picture now. */
+      watchLive() {
+        return !!this.currentAppName || !!(this.sharing && this.sharing.on);
+      },
+      /** The devices the stream is playing on, for "playing on ..." */
+      playerNames() {
+        return (this.players || []).map((p) => p.device).filter(Boolean).join(', ');
+      },
       /** Devices that are streaming now, which can be sent a message */
       streamingDevices() {
         return this.players.filter((p) => p.health).map((p) => p.device).filter((d) => d);
