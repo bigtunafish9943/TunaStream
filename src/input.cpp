@@ -277,6 +277,45 @@ namespace input {
     }
   }
 
+  /**
+   * Whether mouse movement from the TV is someone using a mouse, while the pointer is still
+   * hidden. Android sends where its own pointer is as a stream starts (in the middle of the
+   * screen, where Android keeps it, whenever a mouse or an adapter with a mouse part is plugged
+   * in), and some adapters twitch: neither should put Windows' pointer in the middle of the
+   * game. So the first place reported is only noted, and the pointer moves (and shows) once
+   * it really moves: away from that place, or a little way all told.
+   */
+  static bool pointer_seen_at = false;
+  static float pointer_first_x = 0, pointer_first_y = 0;
+  static int pointer_travel = 0;
+
+  static void pointer_forget() {
+    pointer_seen_at = false;
+    pointer_travel = 0;
+  }
+
+  static bool pointer_really_moved(float x, float y, float width, float height) {
+    if (!pointer_hidden_until_used) {
+      return true;
+    }
+    if (!pointer_seen_at) {
+      pointer_seen_at = true;
+      pointer_first_x = x;
+      pointer_first_y = y;
+      return false;
+    }
+    // More than 2% of the screen away from where it was first
+    return std::abs(x - pointer_first_x) > width * 0.02f || std::abs(y - pointer_first_y) > height * 0.02f;
+  }
+
+  static bool pointer_really_moved(int dx, int dy) {
+    if (!pointer_hidden_until_used) {
+      return true;
+    }
+    pointer_travel += std::abs(dx) + std::abs(dy);
+    return pointer_travel > 24;
+  }
+
   inline int apply_shortcut(short keyCode) {
     constexpr auto VK_F1 = 0x70;
     constexpr auto VK_F13 = 0x7C;
@@ -525,6 +564,9 @@ namespace input {
     }
 
     input->mouse_left_button_timeout = DISABLE_LEFT_BUTTON_DELAY;
+    if (!pointer_really_moved((int) util::endian::big(packet->deltaX), (int) util::endian::big(packet->deltaY))) {
+      return;
+    }
     pointer_used();
     platf::move_mouse(platf_input, util::endian::big(packet->deltaX), util::endian::big(packet->deltaY));
   }
@@ -631,6 +673,9 @@ namespace input {
       touch_port.env_height
     };
 
+    if (!pointer_really_moved(x, y, width, height)) {
+      return;
+    }
     pointer_used();
     platf::abs_mouse(platf_input, abs_port, tpcoords->first, tpcoords->second);
   }
@@ -1734,6 +1779,7 @@ namespace input {
       pointer_hidden_until_used = false;
       display_cursor = true;
     }
+    pointer_forget();
     task_pool.cancel(key_press_repeat_id);
     task_pool.cancel(input->mouse_left_button_timeout);
 
@@ -1998,6 +2044,7 @@ namespace input {
 
     // No pointer in the picture until the TV uses a mouse (see pointer_used)
     pointer_hidden_until_used = true;
+    pointer_forget();
     display_cursor = false;
 
     // Workaround to ensure new frames will be captured when a client connects
